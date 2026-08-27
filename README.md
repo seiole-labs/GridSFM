@@ -1,4 +1,23 @@
-# GridSFM
+# GridFM — Seiole Labs Research Fork
+
+> Forked from (https://github.com/microsoft/GridSFM).
+> Seiole Labs uses this repository for reproducible experiments and
+> extensions related to experimenting GridFMs of Indian datasets.
+>
+> **Upstream license:** MIT License  
+> **Original copyright:** Copyright (c) Microsoft Corporation  
+> **Fork owner:** [Seiole Labs](https://github.com/seiole-labs)
+> Seiole Labs additions are identified in commits and documentation.
+
+See [EXPERIMENTS.md](./EXPERIMENTS.md) for public experiment records.
+
+## Scope and disclaimer
+
+This is an independent Seiole Labs research and engineering fork. It is not
+affiliated with, endorsed by, or sponsored by Microsoft.
+
+Results are experimental and should not be treated as operational energy-grid
+guidance, safety guidance, or production guarantees.
 
 GridSFM is an open-source framework for AC Optimal Power Flow (AC-OPF),
 the optimization that determines the cost-minimizing generator dispatch
