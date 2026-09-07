@@ -276,5 +276,7 @@ end
 
 
 if abspath(PROGRAM_FILE) == @__FILE__
+if abspath(PROGRAM_FILE) == @__FILE__
     main()
+end
 end

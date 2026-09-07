@@ -258,9 +258,20 @@ function build_gridsfm_data(pm, result, data)
     sls = collect(0:length(sv)-1); slr = [bmap[s["shunt_bus"]] for (_,s) in sv]
 
     # ── Solution: bus (va, vm) + gen (pg, qg) ─────────────────
-    sb = haskey(r, "bus") ?
-        [[d["va"], d["vm"]] for (_,d) in sort([(parse(Int,k), d) for (k,d) in r["bus"]]; by=first)] :
-        Vector{Float64}[]
+    # Align solution rows to the complete parsed-bus order. PowerModels omits
+    # inactive type-4 buses from its result, but GridSFM still requires one
+    # finite solution row per input bus. For those omitted buses, retain the
+    # source voltage state (normally va=0, vm=1).
+    sb = Vector{Float64}[]
+    solved_buses = get(r, "bus", Dict{String,Any}())
+    for (bid, bus) in bv
+        solved = get(solved_buses, string(bid), nothing)
+        if solved === nothing
+            push!(sb, Float64[get(bus, "va", 0.0), get(bus, "vm", 1.0)])
+        else
+            push!(sb, Float64[solved["va"], solved["vm"]])
+        end
+    end
     sg = [[0.0, 0.0] for _ in gv]
     if haskey(r, "gen")
         gd = r["gen"]
@@ -284,12 +295,24 @@ function build_gridsfm_data(pm, result, data)
     if length(nle) >= 2nb
         vmv = nwv[:vm]
         for (bi,(bid,_)) in enumerate(bv)
-            v = vmv[bid]
+            # PowerModels may retain an inactive/isolated bus in the parsed
+            # data while omitting its voltage variable from the instantiated
+            # model. Keep the bus row and balance duals, but use zero bound
+            # duals when no voltage variable exists for that bus.
+            lower_dual = 0.0
+            upper_dual = 0.0
+            try
+                v = vmv[bid]
+                lower_dual = has_lower_bound(v) ? max(0.0, JuMP.dual(LowerBoundRef(v))) : 0.0
+                upper_dual = has_upper_bound(v) ? max(0.0, -JuMP.dual(UpperBoundRef(v))) : 0.0
+            catch err
+                err isa KeyError || rethrow()
+            end
             push!(db, Float64[
                 JuMP.dual(nle[2bi-1]),
                 JuMP.dual(nle[2bi]),
-                has_lower_bound(v) ? max(0.0, JuMP.dual(LowerBoundRef(v)))  : 0.0,
-                has_upper_bound(v) ? max(0.0, -JuMP.dual(UpperBoundRef(v))) : 0.0,
+                lower_dual,
+                upper_dual,
             ])
         end
     end
@@ -423,6 +446,7 @@ with any required relaxation applied.
     @printf("Solve: status=%s  obj=%.2f  elapsed=%.2fs\n", term, obj, elapsed)
 
     opf, feas = build_gridsfm_data(pm, result, net)
+    opf["metadata"]["solve_time_seconds"] = elapsed
     open(output_path, "w") do io
         JSON3.pretty(io, opf)
     end
