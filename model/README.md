@@ -86,6 +86,21 @@ python examples/infer_samples.py --gpu 0      # GPU 0
 python examples/infer_samples.py path/to/your_ckpt.pt
 ```
 
+### Inspect every executed layer
+
+Run a real scenario through the checkpoint and print a compact architecture
+DAG. Replicated operations are collapsed (`GridBlock x8`, per-node-type
+encoders), while every stage retains its concrete input/output shapes:
+
+```bash
+cd model
+python examples/print_model_dag.py --output model_dag_case500.txt
+```
+
+Pass `--full` for every runtime module call, optionally with `--leaf-only` for
+just primitive layers. Use `--sample`, `--checkpoint`, and `--device cuda:0`
+to trace a different scenario, checkpoint, or device.
+
 Run on the [OPFData](https://arxiv.org/abs/2406.07234) dataset via `torch_geometric.datasets.OPFDataset` (auto-downloads on first use, then cached):
 
 ```bash

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="717" height="434" viewBox="0 0 717 434" role="img" aria-labelledby="title desc">
+<title id="title">What the feasibility head tells us</title>
+<desc id="desc">Data table from the GridSFM and AC-OPF benchmark.</desc>
+<style>
+.title{font:700 25px Inter,Arial,sans-serif;fill:#F5F2FF}
+.head{font:600 14px Inter,Arial,sans-serif;fill:#F5F2FF}
+.cell{font:500 15px Inter,Arial,sans-serif;fill:#F5F2FF;font-variant-numeric:tabular-nums}
+.em{font-weight:700;fill:#55D6B4}
+.summary{font-weight:700;fill:#A970FF}
+.warning{fill:#F3C969}
+</style>
+<rect width="717" height="434" rx="18" fill="#020510"/>
+<rect x="28" y="68" width="661" height="344" rx="10" fill="#070D1F" stroke="#18234B"/>
+<text class="title" x="28" y="40">What the feasibility head tells us</text>
+<path d="M 28 120 H 689" stroke="#18234B"/>
+<path d="M 34 54 H 102" stroke="#A970FF" stroke-width="3"/>
+<text class="head" text-anchor="start" x="42" y="100">Case</text>
+<text class="head" text-anchor="end" x="404" y="100">Feasibility logit</text>
+<text class="head" text-anchor="end" x="529" y="100">Probability</text>
+<text class="head" text-anchor="end" x="675" y="100">AC-OPF outcome</text>
+<text class="cell" text-anchor="start" x="42" y="148">case6470_rte</text>
+<text class="cell" text-anchor="end" x="404" y="148">2.670</text>
+<text class="cell" text-anchor="end" x="529" y="148">0.935</text>
+<text class="cell" text-anchor="end" x="675" y="148">Solved</text>
+<rect x="29" y="164" width="659" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 164 H 675" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="192">case8387_pegase</text>
+<text class="cell" text-anchor="end" x="404" y="192">-9.150</text>
+<text class="cell" text-anchor="end" x="529" y="192">0.000106</text>
+<text class="cell" text-anchor="end" x="675" y="192">Solved</text>
+<path d="M 42 208 H 675" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="236">case13659_pegase</text>
+<text class="cell" text-anchor="end" x="404" y="236">-39.019</text>
+<text class="cell" text-anchor="end" x="529" y="236">1.13e-17</text>
+<text class="cell" text-anchor="end" x="675" y="236">Solved</text>
+<rect x="29" y="252" width="659" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 252 H 675" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="280">case20758_epigrids</text>
+<text class="cell" text-anchor="end" x="404" y="280">-4.841</text>
+<text class="cell" text-anchor="end" x="529" y="280">0.00784</text>
+<text class="cell" text-anchor="end" x="675" y="280">Solved</text>
+<path d="M 42 296 H 675" stroke="#18234B" opacity="0.8"/>
+<text class="cell warning" text-anchor="start" x="42" y="324">case24464_goc*</text>
+<text class="cell" text-anchor="end" x="404" y="324">-11.167</text>
+<text class="cell" text-anchor="end" x="529" y="324">1.41e-5</text>
+<text class="cell" text-anchor="end" x="675" y="324">Solved</text>
+<rect x="29" y="340" width="659" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 340 H 675" stroke="#18234B" opacity="0.8"/>
+<text class="cell warning" text-anchor="start" x="42" y="368">case78484_epigrids*</text>
+<text class="cell" text-anchor="end" x="404" y="368">-2.449</text>
+<text class="cell" text-anchor="end" x="529" y="368">0.0795</text>
+<text class="cell" text-anchor="end" x="675" y="368">Solved</text>
+</svg>

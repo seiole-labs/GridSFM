@@ -1,0 +1,219 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1100" viewBox="0 0 1800 1100" role="img" aria-labelledby="title desc">
+  <title id="title">GridSFM architecture DAG</title>
+  <desc id="desc">Collapsed GridSFM architecture showing heterogeneous inputs, Hodge positional encoding, type encoders, eight repeated GridBlocks, fusion, prediction heads, physics post-processing, and output tensor shapes for case500_goc.</desc>
+  <defs>
+    <radialGradient id="canvas" cx="50%" cy="0%" r="95%">
+      <stop offset="0%" stop-color="#0B1228"/>
+      <stop offset="58%" stop-color="#020510"/>
+      <stop offset="100%" stop-color="#020510"/>
+    </radialGradient>
+    <linearGradient id="blockAccent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#A970FF"/>
+      <stop offset="100%" stop-color="#6878FF"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#A970FF"/>
+    </marker>
+    <style>
+      text { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .title { fill: #F5F2FF; font-size: 42px; font-weight: 700; letter-spacing: -0.5px; }
+      .subtitle { fill: #8993BA; font-size: 18px; font-weight: 400; }
+      .meta { fill: #B99CFF; font-size: 13px; font-weight: 700; letter-spacing: 1.4px; }
+      .section { fill: #F5F2FF; font-size: 20px; font-weight: 700; }
+      .section-sub { fill: #8993BA; font-size: 13px; font-weight: 500; }
+      .label { fill: #F5F2FF; font-size: 15px; font-weight: 600; }
+      .body { fill: #B8C0DE; font-size: 14px; font-weight: 400; }
+      .small { fill: #8993BA; font-size: 12px; font-weight: 500; }
+      .shape { fill: #DF8FFF; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .violet { fill: #A970FF; }
+      .positive { fill: #55D6B4; }
+      .surface { fill: #070D1F; stroke: #18234B; stroke-width: 1.5; }
+      .elevated { fill: #0B1228; stroke: #18234B; stroke-width: 1.2; }
+      .accent-card { fill: #0B1228; stroke: #493986; stroke-width: 1.5; }
+      .divider { stroke: #1A2547; stroke-width: 1; }
+      .flow { fill: none; stroke: #A970FF; stroke-width: 2.5; marker-end: url(#arrow); }
+      .flow-muted { fill: none; stroke: #6878FF; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1100" fill="url(#canvas)"/>
+
+  <text class="title" x="50" y="65">GridSFM architecture</text>
+  <text class="subtitle" x="50" y="98">Runtime shapes for case500_goc · repeated modules collapsed into architectural blocks</text>
+  <text class="meta" x="1750" y="62" text-anchor="end">15,148,227 PARAMETERS · BATCH 1</text>
+  <text class="small" x="1750" y="92" text-anchor="end">GridTransformerBackbone · hidden width 128</text>
+
+  <!-- Stage connectors -->
+  <path class="flow" d="M380 510 H424"/>
+  <path class="flow" d="M730 510 H774"/>
+  <path class="flow" d="M1210 510 H1254"/>
+
+  <!-- Inputs -->
+  <g aria-label="Heterogeneous input tensors">
+    <rect class="surface" x="50" y="140" width="330" height="720" rx="18"/>
+    <rect x="50" y="140" width="5" height="720" rx="2.5" fill="#6878FF"/>
+    <text class="meta" x="78" y="176">01 · INPUT</text>
+    <text class="section" x="78" y="207">Heterogeneous graph</text>
+    <text class="section-sub" x="78" y="231">Component tensors entering the model</text>
+
+    <text class="small" x="78" y="273">TYPE</text>
+    <text class="small" x="350" y="273" text-anchor="end">SHAPE</text>
+    <line class="divider" x1="78" y1="287" x2="350" y2="287"/>
+
+    <g>
+      <text class="label" x="78" y="321">Bus</text><text class="shape" x="350" y="321" text-anchor="end">500 × 16</text>
+      <line class="divider" x1="78" y1="340" x2="350" y2="340"/>
+      <text class="label" x="78" y="374">Generator</text><text class="shape" x="350" y="374" text-anchor="end">171 × 11</text>
+      <line class="divider" x1="78" y1="393" x2="350" y2="393"/>
+      <text class="label" x="78" y="427">Load</text><text class="shape" x="350" y="427" text-anchor="end">281 × 2</text>
+      <line class="divider" x1="78" y1="446" x2="350" y2="446"/>
+      <text class="label" x="78" y="480">Shunt</text><text class="shape" x="350" y="480" text-anchor="end">31 × 2</text>
+      <line class="divider" x1="78" y1="499" x2="350" y2="499"/>
+      <text class="label" x="78" y="533">AC branch</text><text class="shape" x="350" y="533" text-anchor="end">536 × 13</text>
+      <line class="divider" x1="78" y1="552" x2="350" y2="552"/>
+      <text class="label" x="78" y="586">Transformer</text><text class="shape" x="350" y="586" text-anchor="end">192 × 15</text>
+      <line class="divider" x1="78" y1="605" x2="350" y2="605"/>
+      <text class="label" x="78" y="639">Cycle</text><text class="shape" x="350" y="639" text-anchor="end">229 × 4</text>
+    </g>
+
+    <rect class="elevated" x="78" y="686" width="272" height="132" rx="12"/>
+    <text class="small" x="98" y="715">PHYSICAL CONNECTIVITY</text>
+    <text class="body" x="98" y="748">AC lines</text><text class="shape" x="330" y="748" text-anchor="end">536</text>
+    <text class="body" x="98" y="779">Transformers</text><text class="shape" x="330" y="779" text-anchor="end">192</text>
+    <text class="small" x="98" y="806">Directed typed relations are built downstream.</text>
+  </g>
+
+  <!-- Encoding -->
+  <g aria-label="Positional and type encoding">
+    <rect class="surface" x="430" y="140" width="300" height="720" rx="18"/>
+    <rect x="430" y="140" width="5" height="720" rx="2.5" fill="#A970FF"/>
+    <text class="meta" x="458" y="176">02 · ENCODING</text>
+    <text class="section" x="458" y="207">Topology + type</text>
+    <text class="section-sub" x="458" y="231">Shared latent width: 128</text>
+
+    <rect class="accent-card" x="458" y="266" width="244" height="224" rx="14"/>
+    <text class="label" x="480" y="299">Hodge positional encoder</text>
+    <text class="small" x="480" y="325">BUS · AC · TRANSFORMER · CYCLE</text>
+    <text class="shape" x="480" y="361">[N, F] → [N, 8]</text>
+    <text class="body" x="480" y="391">4 signed diffusion steps</text>
+    <text class="body" x="480" y="418">Concatenate PE with features</text>
+    <path class="flow-muted" d="M480 447 H670"/>
+    <text class="small" x="575" y="473" text-anchor="middle">PE ADDED TO 4 TYPES</text>
+
+    <rect class="elevated" x="458" y="526" width="244" height="270" rx="14"/>
+    <text class="label" x="480" y="559">Type encoders ×7</text>
+    <text class="body" x="480" y="588">LayerNorm → Linear</text>
+    <text class="shape" x="480" y="621">[N, F(+8)] → [N, 128]</text>
+    <line class="divider" x1="480" y1="644" x2="680" y2="644"/>
+    <text class="small" x="480" y="674">ENCODER INPUT WIDTHS</text>
+    <text class="body" x="480" y="701">bus 24 · gen 11 · load 2</text>
+    <text class="body" x="480" y="728">shunt 2 · AC 21 · TR 23</text>
+    <text class="body" x="480" y="755">cycle 12</text>
+    <text class="positive" x="480" y="782" font-size="13" font-weight="600">All outputs retain component count N</text>
+  </g>
+
+  <!-- Repeated transformer trunk -->
+  <g aria-label="Eight repeated GridBlocks">
+    <rect class="surface" x="780" y="140" width="430" height="720" rx="18"/>
+    <rect x="780" y="140" width="5" height="720" rx="2.5" fill="url(#blockAccent)"/>
+    <text class="meta" x="808" y="176">03 · TRANSFORMER TRUNK</text>
+    <text class="section" x="808" y="207">GridBlock</text>
+    <rect x="1088" y="166" width="88" height="42" rx="21" fill="#493986" stroke="#A970FF" stroke-width="1.2"/>
+    <text class="shape" x="1132" y="192" text-anchor="middle">×8</text>
+    <text class="section-sub" x="808" y="234">Every block preserves [N_type, 128]</text>
+
+    <rect class="elevated" x="808" y="270" width="374" height="150" rx="14"/>
+    <circle cx="838" cy="301" r="16" fill="#493986"/><text x="838" y="307" text-anchor="middle" fill="#F5F2FF" font-size="14" font-weight="700">1</text>
+    <text class="label" x="868" y="306">Per-type linear attention</text>
+    <text class="body" x="838" y="342">LayerNorm → Q/K/V → 4 heads → O</text>
+    <text class="shape" x="838" y="374">[N,128] → [N,128]</text>
+    <text class="small" x="838" y="399">RESIDUAL ADD · APPLIED TO ALL 7 TYPES</text>
+
+    <path class="flow-muted" d="M995 420 V446"/>
+    <rect class="elevated" x="808" y="452" width="374" height="162" rx="14"/>
+    <circle cx="838" cy="483" r="16" fill="#493986"/><text x="838" y="489" text-anchor="middle" fill="#F5F2FF" font-size="14" font-weight="700">2</text>
+    <text class="label" x="868" y="488">Heterogeneous message passing</text>
+    <text class="body" x="838" y="524">LayerNorm → 14 typed relations</text>
+    <text class="body" x="838" y="552">Signed incidence + GraphSAGE</text>
+    <text class="shape" x="838" y="582">[N,128] → [N,128]</text>
+    <text class="small" x="1058" y="582">+ RESIDUAL</text>
+
+    <path class="flow-muted" d="M995 614 V640"/>
+    <rect class="elevated" x="808" y="646" width="374" height="150" rx="14"/>
+    <circle cx="838" cy="677" r="16" fill="#493986"/><text x="838" y="683" text-anchor="middle" fill="#F5F2FF" font-size="14" font-weight="700">3</text>
+    <text class="label" x="868" y="682">Feed-forward network</text>
+    <text class="body" x="838" y="718">LayerNorm → Linear → GELU → Linear</text>
+    <text class="shape" x="838" y="750">128 → 512 → 128</text>
+    <text class="small" x="838" y="776">RESIDUAL ADD · OUTPUT [N_TYPE,128]</text>
+
+    <text class="small" x="995" y="830" text-anchor="middle">SAME WEIGHTS STRUCTURE, DISTINCT PARAMETERS PER BLOCK</text>
+  </g>
+
+  <!-- Fusion and heads -->
+  <g aria-label="Fusion and output heads">
+    <rect class="surface" x="1260" y="140" width="490" height="720" rx="18"/>
+    <rect x="1260" y="140" width="5" height="720" rx="2.5" fill="#DF8FFF"/>
+    <text class="meta" x="1288" y="176">04 · FUSION + HEADS</text>
+    <text class="section" x="1288" y="207">Specialize the shared state</text>
+    <text class="section-sub" x="1288" y="231">Typed fusion, graph pooling, prediction</text>
+
+    <rect class="accent-card" x="1288" y="266" width="434" height="150" rx="14"/>
+    <text class="label" x="1310" y="299">Typed fusion + graph pooling</text>
+    <text class="body" x="1310" y="334">Bus state</text><text class="shape" x="1698" y="334" text-anchor="end">500 × 128</text>
+    <text class="body" x="1310" y="364">Generator state</text><text class="shape" x="1698" y="364" text-anchor="end">171 × 128</text>
+    <text class="body" x="1310" y="394">Global state</text><text class="shape" x="1698" y="394" text-anchor="end">1 × 128</text>
+
+    <rect class="elevated" x="1288" y="446" width="434" height="258" rx="14"/>
+    <text class="label" x="1310" y="479">Prediction heads</text>
+    <text class="small" x="1698" y="479" text-anchor="end">LINEAR → GELU → LINEAR</text>
+    <line class="divider" x1="1310" y1="496" x2="1698" y2="496"/>
+    <text class="body" x="1310" y="529">θ</text><text class="shape" x="1698" y="529" text-anchor="end">500×264 → 500×64 → 500×1</text>
+    <text class="body" x="1310" y="565">V</text><text class="shape" x="1698" y="565" text-anchor="end">500×265 → 500×64 → 500×1</text>
+    <text class="body" x="1310" y="601">Pg / Qg</text><text class="shape" x="1698" y="601" text-anchor="end">171×264 → 171×64 → 171×1</text>
+    <text class="body" x="1310" y="637">Feasibility</text><text class="shape" x="1698" y="637" text-anchor="end">1×160 → 1×64 → 1×1</text>
+    <text class="small" x="1310" y="677">HEAD INPUTS INCLUDE FUSED GLOBAL CONTEXT</text>
+
+    <rect class="elevated" x="1288" y="734" width="434" height="86" rx="14"/>
+    <text class="label" x="1310" y="767">Analytical physics</text>
+    <text class="body" x="1310" y="795">DC prior + anchoring · clipping · AC π-model flows</text>
+  </g>
+
+  <!-- Output strip -->
+  <g aria-label="Model output tensors">
+    <rect class="surface" x="50" y="915" width="1700" height="135" rx="18"/>
+    <text class="meta" x="78" y="949">OUTPUT TENSORS</text>
+
+    <g transform="translate(78 973)">
+      <text class="label" x="0" y="0">Bus predictions</text>
+      <text class="shape" x="0" y="30">500 × 2</text>
+      <text class="small" x="0" y="54">θ · V</text>
+    </g>
+    <line class="divider" x1="350" y1="963" x2="350" y2="1028"/>
+    <g transform="translate(390 973)">
+      <text class="label" x="0" y="0">Generator predictions</text>
+      <text class="shape" x="0" y="30">171 × 2</text>
+      <text class="small" x="0" y="54">Pg · Qg</text>
+    </g>
+    <line class="divider" x1="700" y1="963" x2="700" y2="1028"/>
+    <g transform="translate(740 973)">
+      <text class="label" x="0" y="0">AC-line flows</text>
+      <text class="shape" x="0" y="30">536 × 4</text>
+      <text class="small" x="0" y="54">Pij · Qij · Pji · Qji</text>
+    </g>
+    <line class="divider" x1="1040" y1="963" x2="1040" y2="1028"/>
+    <g transform="translate(1080 973)">
+      <text class="label" x="0" y="0">Transformer flows</text>
+      <text class="shape" x="0" y="30">192 × 4</text>
+      <text class="small" x="0" y="54">Pij · Qij · Pji · Qji</text>
+    </g>
+    <line class="divider" x1="1390" y1="963" x2="1390" y2="1028"/>
+    <g transform="translate(1430 973)">
+      <text class="label" x="0" y="0">Feasibility logit</text>
+      <text class="shape" x="0" y="30">1</text>
+      <text class="small" x="0" y="54">sigmoid → probability</text>
+    </g>
+  </g>
+
+  <text class="small" x="50" y="1080">N denotes the number of components of a given type. Shapes are from the shipped case500_goc scenario.</text>
+  <text class="small" x="1750" y="1080" text-anchor="end">GRID BLOCK ×8 · REPLICATED LAYERS SHOWN ONCE</text>
+</svg>

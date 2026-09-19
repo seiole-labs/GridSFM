@@ -15,6 +15,14 @@ from .data import (
     load_pyg_json,
     prepare_for_inference,
 )
+from .dag import (
+    LayerCall,
+    ModuleDagTrace,
+    format_gridsfm_architecture,
+    format_module_dag,
+    print_module_dag,
+    trace_module_dag,
+)
 from .eval import eval_pass
 from .finetune_opfdata import finetune_opfdata
 from .loss import compute_loss
@@ -124,6 +132,12 @@ __all__ = [
     "load_opfdata",
     "prepare_for_inference",
     "predict",
+    "LayerCall",
+    "ModuleDagTrace",
+    "trace_module_dag",
+    "format_gridsfm_architecture",
+    "format_module_dag",
+    "print_module_dag",
     "schema",
     # Edge-type schema keys (used by callers wiring batched flows back to
     # per-edge-type IDs; see `predict()` body for the canonical pattern).

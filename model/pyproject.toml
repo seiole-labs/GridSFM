@@ -50,6 +50,9 @@ notebook = [
     "matplotlib>=3.7,<4",
     "jupyter>=1,<2",
 ]
+graph = [
+    "torchviz>=0.0.3,<1",
+]
 
 [project.urls]
 Homepage = "https://github.com/microsoft/GridSFM"

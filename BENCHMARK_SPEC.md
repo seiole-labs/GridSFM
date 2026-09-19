@@ -196,6 +196,8 @@ Persist these raw fields rather than reconstructing timing later:
 | `dc_seeded_total_seconds` | `dc_presolve_seconds + dc_ac_solve_seconds` |
 | `*_ac_model_build_seconds` | AC PowerModels construction component, excluded from seeded total but included in E2E |
 | `*_workflow_e2e_seconds` | Complete steady-state workflow boundary defined above |
+| `*_ac_ipopt_iterations` | Ipopt barrier iterations for the corresponding AC solve |
+| `dc_seed_ipopt_iterations` | Ipopt barrier iterations used to construct the DC-OPF seed |
 
 Run one unmeasured warm-up followed by five measured repetitions per case and arm. Keep execution serial and pin the same thread settings. Report median, minimum, maximum, every individual observation, and:
 

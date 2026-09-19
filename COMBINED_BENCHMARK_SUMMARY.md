@@ -49,14 +49,17 @@ These are component timings, not complete wall-clock measurements. The AC timer 
 
 ### Exact timing boundaries
 
-The prediction JSON calls its request measurement `end_to_end_seconds`, but it is only end-to-end within a **model-resident inference request**. A complete cold-process end-to-end time is not currently recorded for either method.
+The historical prediction JSON calls its request measurement `end_to_end_seconds`, but it is only end-to-end within a **model-resident inference request**. The implementation now names that field `resident_request_seconds` and provides an external cold-request observer that reserves `end_to_end_seconds` for process launch through a fully written prediction response. The benchmark has not yet been rerun with the new cold-request observer, so the table above still contains the historical resident-request measurements.
 
 | Recorded field | Timer starts | Timer stops | Included | Excluded |
 |---|---|---|---|---|
 | GridSFM `forward_seconds` | Immediately before `model(batch)` | Immediately after the forward pass and device synchronization | Neural inference, DC prior, predicted branch-flow calculation, feasibility head | Python startup/imports, checkpoint load, JSON parsing, feature preparation, batching, tensor-to-list conversion, serialization, output writing |
-| GridSFM `end_to_end_seconds` | Before loading the `.pyg.json` | After output tensors are detached and moved to CPU | Input loading, PyG conversion, cycle/positional feature preparation, batching, device transfer, forward pass, CPU tensor return | Python startup/imports, checkpoint load, tensor-to-list conversion, prediction serialization, output writing |
+| GridSFM `resident_request_seconds` | Before loading the `.pyg.json` | After output tensors are detached and moved to CPU | Input loading, PyG conversion, cycle/positional feature preparation, batching, device transfer, forward pass, CPU tensor return | Python startup/imports, checkpoint load, tensor-to-list conversion, prediction serialization, output writing |
+| GridSFM `end_to_end_seconds` | Immediately before launching the inference worker | After the prediction file is written and the worker exits successfully | Worker startup, imports, checkpoint load, input loading, preparation, inference, CPU conversion, response construction, serialization, output writing, worker shutdown | External observer startup and post-measurement timing annotation |
 | AC-OPF `solve_time_seconds` | Before `PowerModels.instantiate_model` | After `PowerModels.optimize_model!` returns | PowerModels/JuMP model construction, Ipopt initialization and optimization, solver-result construction | Julia/container startup, MATPOWER parsing, PyG export construction, serialization, file writing, and every separate validation re-solve |
 | Cold process end-to-end | Not currently measured | Not currently measured | — | No defensible cold end-to-end value is available yet |
+
+New benchmark runs also record Ipopt's solver-reported barrier iteration count. The warm-start comparison keeps the DC seed solve's iterations separate from the iterations in the subsequent AC solve.
 
 **AC-OPF timing is one solve, never the sum of two solves.** Where a source solve and a PyG round-trip re-solve were both performed, the benchmark table reports only the source solve's `solve_time_seconds`. The round-trip duration is stored separately in its audit JSON and is not added to the reported AC-OPF time. For example, the 24k row reports the source solve's 1,914.41 seconds, not source plus re-solve; the 78k direct comparison reports its single successful reference solve's 1,924.45 seconds and had no round-trip re-solve.
 

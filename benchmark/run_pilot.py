@@ -72,7 +72,7 @@ def _row(result: dict[str, Any]) -> dict[str, Any]:
         "ac_opf_overloaded_branches": physics["ac_opf"]["thermal"]["overloaded_branch_count"],
         "ac_opf_seconds": timing["ac_opf_solve"],
         "gridsfm_forward_seconds": timing["gridsfm_forward"],
-        "gridsfm_request_seconds": timing["gridsfm_end_to_end"],
+        "gridsfm_request_seconds": timing["gridsfm_resident_request"],
     }
 
 

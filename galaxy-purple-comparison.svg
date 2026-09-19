@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1120" viewBox="0 0 1500 1120">
+  <defs>
+    <radialGradient id="cosmic-bg" cx="88%" cy="0%" r="105%"><stop offset="0" stop-color="#101B46"/><stop offset="0.42" stop-color="#071027"/><stop offset="1" stop-color="#030712"/></radialGradient>
+    <radialGradient id="horizon-bg" cx="86%" cy="0%" r="105%"><stop offset="0" stop-color="#21104A"/><stop offset="0.44" stop-color="#0C0924"/><stop offset="1" stop-color="#050617"/></radialGradient>
+    <radialGradient id="ultraviolet-bg" cx="86%" cy="0%" r="105%"><stop offset="0" stop-color="#0B1638"/><stop offset="0.44" stop-color="#040A1F"/><stop offset="1" stop-color="#020510"/></radialGradient>
+    <linearGradient id="cosmic-fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4F8CFF" stop-opacity=".23"/><stop offset="1" stop-color="#4F8CFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="horizon-fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#7C6CFF" stop-opacity=".23"/><stop offset="1" stop-color="#7C6CFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="ultraviolet-fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#A970FF" stop-opacity=".25"/><stop offset="1" stop-color="#A970FF" stop-opacity="0"/></linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <style>
+    text { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .title { font-size: 27px; font-weight: 730; letter-spacing: -.5px; }
+    .subtitle { font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+    .label { font-size: 12px; font-weight: 650; letter-spacing: .35px; }
+    .small { font-size: 11px; font-weight: 520; }
+    .metric { font-size: 35px; font-weight: 730; letter-spacing: -1px; }
+    .line { fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .line2 { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .grid { stroke-width: 1; stroke-dasharray: 2 7; }
+  </style>
+  <rect width="1500" height="1120" fill="#03040A"/>
+  <text x="55" y="54" fill="#F3F5FF" font-size="30" font-weight="750" letter-spacing="-.8">Graphite Cobalt · Galactic studies</text>
+  <text x="55" y="80" fill="#7E86A2" font-size="14">Same restrained grammar · three balances of deep blue, cobalt, and violet</text>
+
+  <!-- 01 Cosmic Cobalt -->
+  <g transform="translate(45 112)">
+    <rect width="1410" height="300" rx="22" fill="url(#cosmic-bg)" stroke="#1D2A4D"/>
+    <g fill="#8492B9" opacity=".28"><circle cx="1217" cy="28" r="1.4"/><circle cx="1285" cy="51" r="1"/><circle cx="1358" cy="30" r="1.2"/><circle cx="1321" cy="79" r=".8"/><circle cx="1168" cy="67" r=".8"/></g>
+    <rect x="22" y="21" width="48" height="31" rx="8" fill="#4F8CFF"/><text x="46" y="43" text-anchor="middle" fill="#FFFFFF" font-size="17" font-weight="800">01</text>
+    <text x="88" y="44" class="title" fill="#EEF3FF">Cosmic Cobalt</text><text x="88" y="67" class="subtitle" fill="#8190B3">BLUE-LED · QUIETLY COSMIC · MOST PROFESSIONAL</text>
+    <text x="1080" y="39" class="label" fill="#8190B3">MODEL ACCURACY</text><text x="1080" y="75" class="metric" fill="#EEF3FF">94.8%</text><text x="1230" y="68" class="label" fill="#A98AFF">▲ 3.2%</text>
+    <rect x="24" y="88" width="970" height="188" rx="13" fill="#0A1328" stroke="#172444"/>
+    <text x="47" y="116" class="label" fill="#EEF3FF">Training dynamics</text><text x="908" y="116" class="small" fill="#8190B3">24 epochs</text>
+    <g stroke="#1D2A4D" class="grid"><line x1="47" y1="139" x2="969" y2="139"/><line x1="47" y1="177" x2="969" y2="177"/><line x1="47" y1="215" x2="969" y2="215"/><line x1="47" y1="253" x2="969" y2="253"/></g>
+    <path d="M47 252 L92 246 L137 235 L182 239 L227 216 L272 220 L317 197 L362 203 L407 177 L452 184 L497 161 L542 166 L587 148 L632 152 L677 139 L722 143 L767 131 L812 134 L857 123 L902 127 L969 113 L969 253 L47 253Z" fill="url(#cosmic-fill)"/>
+    <polyline class="line2" stroke="#8C72FF" points="47,247 92,239 137,245 182,224 227,229 272,210 317,215 362,194 407,200 452,178 497,183 542,169 587,171 632,156 677,162 722,148 767,153 812,139 857,143 902,133 969,137"/>
+    <polyline class="line" stroke="#4F8CFF" points="47,252 92,246 137,235 182,239 227,216 272,220 317,197 362,203 407,177 452,184 497,161 542,166 587,148 632,152 677,139 722,143 767,131 812,134 857,123 902,127 969,113"/>
+    <circle cx="969" cy="113" r="6" fill="#D9D4FF" filter="url(#glow)"/>
+    <rect x="1014" y="98" width="372" height="178" rx="13" fill="#0A1328" stroke="#172444"/>
+    <text x="1038" y="127" class="label" fill="#EEF3FF">Latency by stage</text>
+    <g class="small" fill="#8190B3"><text x="1038" y="161">ENCODE</text><text x="1038" y="201">MATCH</text><text x="1038" y="241">SOLVE</text></g>
+    <g fill="#1D2A4D"><rect x="1128" y="148" width="220" height="14" rx="7"/><rect x="1128" y="188" width="220" height="14" rx="7"/><rect x="1128" y="228" width="220" height="14" rx="7"/></g>
+    <rect x="1128" y="148" width="161" height="14" rx="7" fill="#4F8CFF"/><rect x="1128" y="188" width="118" height="14" rx="7" fill="#8C72FF"/><rect x="1128" y="228" width="189" height="14" rx="7" fill="#D9D4FF"/>
+  </g>
+
+  <!-- 02 Event Horizon Violet -->
+  <g transform="translate(45 432)">
+    <rect width="1410" height="300" rx="22" fill="url(#horizon-bg)" stroke="#2C2254"/>
+    <g fill="#A594D4" opacity=".3"><circle cx="1217" cy="28" r="1.4"/><circle cx="1285" cy="51" r="1"/><circle cx="1358" cy="30" r="1.2"/><circle cx="1321" cy="79" r=".8"/><circle cx="1168" cy="67" r=".8"/></g>
+    <rect x="22" y="21" width="48" height="31" rx="8" fill="#7C6CFF"/><text x="46" y="43" text-anchor="middle" fill="#FFFFFF" font-size="17" font-weight="800">02</text>
+    <text x="88" y="44" class="title" fill="#F1EFFF">Event Horizon Violet</text><text x="88" y="67" class="subtitle" fill="#9189B5">BALANCED · DISTINCTIVE · RECOMMENDED</text>
+    <text x="1080" y="39" class="label" fill="#9189B5">MODEL ACCURACY</text><text x="1080" y="75" class="metric" fill="#F1EFFF">94.8%</text><text x="1230" y="68" class="label" fill="#C779FF">▲ 3.2%</text>
+    <rect x="24" y="88" width="970" height="188" rx="13" fill="#11102A" stroke="#27204C"/>
+    <text x="47" y="116" class="label" fill="#F1EFFF">Training dynamics</text><text x="908" y="116" class="small" fill="#9189B5">24 epochs</text>
+    <g stroke="#2C2752" class="grid"><line x1="47" y1="139" x2="969" y2="139"/><line x1="47" y1="177" x2="969" y2="177"/><line x1="47" y1="215" x2="969" y2="215"/><line x1="47" y1="253" x2="969" y2="253"/></g>
+    <path d="M47 252 L92 246 L137 235 L182 239 L227 216 L272 220 L317 197 L362 203 L407 177 L452 184 L497 161 L542 166 L587 148 L632 152 L677 139 L722 143 L767 131 L812 134 L857 123 L902 127 L969 113 L969 253 L47 253Z" fill="url(#horizon-fill)"/>
+    <polyline class="line2" stroke="#478CFF" points="47,247 92,239 137,245 182,224 227,229 272,210 317,215 362,194 407,200 452,178 497,183 542,169 587,171 632,156 677,162 722,148 767,153 812,139 857,143 902,133 969,137"/>
+    <polyline class="line" stroke="#7C6CFF" points="47,252 92,246 137,235 182,239 227,216 272,220 317,197 362,203 407,177 452,184 497,161 542,166 587,148 632,152 677,139 722,143 767,131 812,134 857,123 902,127 969,113"/>
+    <circle cx="969" cy="113" r="6" fill="#C779FF" filter="url(#glow)"/>
+    <rect x="1014" y="98" width="372" height="178" rx="13" fill="#11102A" stroke="#27204C"/>
+    <text x="1038" y="127" class="label" fill="#F1EFFF">Latency by stage</text>
+    <g class="small" fill="#9189B5"><text x="1038" y="161">ENCODE</text><text x="1038" y="201">MATCH</text><text x="1038" y="241">SOLVE</text></g>
+    <g fill="#2C2752"><rect x="1128" y="148" width="220" height="14" rx="7"/><rect x="1128" y="188" width="220" height="14" rx="7"/><rect x="1128" y="228" width="220" height="14" rx="7"/></g>
+    <rect x="1128" y="148" width="161" height="14" rx="7" fill="#7C6CFF"/><rect x="1128" y="188" width="118" height="14" rx="7" fill="#478CFF"/><rect x="1128" y="228" width="189" height="14" rx="7" fill="#C779FF"/>
+  </g>
+
+  <!-- 03 Ultraviolet Orbit -->
+  <g transform="translate(45 752)">
+    <rect width="1410" height="300" rx="22" fill="url(#ultraviolet-bg)" stroke="#18234B"/>
+    <g fill="#9FAEFF" opacity=".28"><circle cx="1217" cy="28" r="1.4"/><circle cx="1285" cy="51" r="1"/><circle cx="1358" cy="30" r="1.2"/><circle cx="1321" cy="79" r=".8"/><circle cx="1168" cy="67" r=".8"/></g>
+    <rect x="22" y="21" width="48" height="31" rx="8" fill="#A36BFF"/><text x="46" y="43" text-anchor="middle" fill="#FFFFFF" font-size="17" font-weight="800">03</text>
+    <text x="88" y="44" class="title" fill="#F5F2FF">Ultraviolet Orbit</text><text x="88" y="67" class="subtitle" fill="#8993BA">PURPLE SIGNAL · DEEP-SPACE BLUE · HIGH CONTRAST</text>
+    <text x="1080" y="39" class="label" fill="#8993BA">MODEL ACCURACY</text><text x="1080" y="75" class="metric" fill="#F5F2FF">94.8%</text><text x="1230" y="68" class="label" fill="#DF8FFF">▲ 3.2%</text>
+    <rect x="24" y="88" width="970" height="188" rx="13" fill="#070D1F" stroke="#18234B"/>
+    <text x="47" y="116" class="label" fill="#F5F2FF">Training dynamics</text><text x="908" y="116" class="small" fill="#8993BA">24 epochs</text>
+    <g stroke="#1A2547" class="grid"><line x1="47" y1="139" x2="969" y2="139"/><line x1="47" y1="177" x2="969" y2="177"/><line x1="47" y1="215" x2="969" y2="215"/><line x1="47" y1="253" x2="969" y2="253"/></g>
+    <path d="M47 252 L92 246 L137 235 L182 239 L227 216 L272 220 L317 197 L362 203 L407 177 L452 184 L497 161 L542 166 L587 148 L632 152 L677 139 L722 143 L767 131 L812 134 L857 123 L902 127 L969 113 L969 253 L47 253Z" fill="url(#ultraviolet-fill)"/>
+    <polyline class="line2" stroke="#6878FF" points="47,247 92,239 137,245 182,224 227,229 272,210 317,215 362,194 407,200 452,178 497,183 542,169 587,171 632,156 677,162 722,148 767,153 812,139 857,143 902,133 969,137"/>
+    <polyline class="line" stroke="#A970FF" points="47,252 92,246 137,235 182,239 227,216 272,220 317,197 362,203 407,177 452,184 497,161 542,166 587,148 632,152 677,139 722,143 767,131 812,134 857,123 902,127 969,113"/>
+    <circle cx="969" cy="113" r="6" fill="#DF8FFF" filter="url(#glow)"/>
+    <rect x="1014" y="98" width="372" height="178" rx="13" fill="#070D1F" stroke="#18234B"/>
+    <text x="1038" y="127" class="label" fill="#F5F2FF">Latency by stage</text>
+    <g class="small" fill="#8993BA"><text x="1038" y="161">ENCODE</text><text x="1038" y="201">MATCH</text><text x="1038" y="241">SOLVE</text></g>
+    <g fill="#202B50"><rect x="1128" y="148" width="220" height="14" rx="7"/><rect x="1128" y="188" width="220" height="14" rx="7"/><rect x="1128" y="228" width="220" height="14" rx="7"/></g>
+    <rect x="1128" y="148" width="161" height="14" rx="7" fill="#A970FF"/><rect x="1128" y="188" width="118" height="14" rx="7" fill="#6878FF"/><rect x="1128" y="228" width="189" height="14" rx="7" fill="#DF8FFF"/>
+  </g>
+  <text x="750" y="1092" text-anchor="middle" fill="#626A85" font-size="12" letter-spacing="1.1">GALACTIC GRAPHITE STUDY · BLUE → BALANCED → PURPLE</text>
+</svg>

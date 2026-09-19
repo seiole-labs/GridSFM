@@ -61,6 +61,7 @@ function _solve_ac(net; approximate=false)
         "ac_model_build_seconds" => build_seconds,
         "ac_solve_wall_seconds" => solve_wall_seconds,
         "ac_solver_reported_seconds" => get(result, "solve_time", nothing),
+        "ac_ipopt_iterations" => _ipopt_iterations(pm),
     ), result
 end
 
@@ -99,7 +100,8 @@ function _dc_seed(base_net)
     start = time()
     dc_net = deepcopy(base_net)
     _reset_primal_start!(dc_net)
-    dc_result = PowerModels.solve_dc_opf(dc_net, _optimizer())
+    dc_pm = PowerModels.instantiate_model(dc_net, DCPPowerModel, PowerModels.build_opf)
+    dc_result = PowerModels.optimize_model!(dc_pm, optimizer=_optimizer())
     term = string(get(dc_result, "termination_status", "UNKNOWN"))
     _success(term) || error("DC-OPF seed solve failed with $term")
     target = deepcopy(base_net)
@@ -109,6 +111,7 @@ function _dc_seed(base_net)
         "seconds" => elapsed,
         "termination_status" => term,
         "solver_reported_seconds" => get(dc_result, "solve_time", nothing),
+        "ipopt_iterations" => _ipopt_iterations(dc_pm),
         "objective" => get(dc_result, "objective", nothing),
     )
 end
@@ -132,7 +135,15 @@ function _run_triplet(base_net, pyg, prediction, repetition;
     mapping_start = time()
     seed_metadata = apply_gridsfm_pg_theta!(gridsfm_net, pyg, prediction)
     mapping_seconds = time() - mapping_start
-    recorded_inference = Float64(prediction["timing"]["end_to_end_seconds"])
+    prediction_timing = prediction["timing"]
+    # Historical artifacts used `end_to_end_seconds` for this model-resident
+    # boundary. New artifacts name it explicitly and reserve E2E for the
+    # externally observed cold CLI request.
+    recorded_inference = Float64(
+        haskey(prediction_timing, "resident_request_seconds") ?
+        prediction_timing["resident_request_seconds"] :
+        prediction_timing["end_to_end_seconds"]
+    )
     gridsfm_presolve = recorded_inference + mapping_seconds
     gridsfm, gridsfm_result = _solve_ac(gridsfm_net; approximate=true)
     gridsfm["arm"] = "gridsfm_warm"

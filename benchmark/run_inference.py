@@ -52,7 +52,7 @@ def serving_metadata(device: torch.device, batch_size: int) -> dict[str, Any]:
 
 
 def run_inference(model, scenario_path: Path, device: torch.device) -> dict[str, Any]:
-    end_to_end_start = time.perf_counter()
+    resident_request_start = time.perf_counter()
     data = prepare_for_inference(load_pyg_json(scenario_path))
     batch = batch_data_list([data]).to(device)
 
@@ -76,14 +76,14 @@ def run_inference(model, scenario_path: Path, device: torch.device) -> dict[str,
             flow_rows.append(flows)
     all_flows = torch.cat(flow_rows, dim=0) if flow_rows else torch.zeros((0, 4))
     feasibility_logit = float(out.feas_logit.detach().cpu().item())
-    end_to_end_seconds = time.perf_counter() - end_to_end_start
+    resident_request_seconds = time.perf_counter() - resident_request_start
 
     return {
         "scenario": scenario_path.as_posix(),
         "device": str(device),
         "timing": {
             "forward_seconds": forward_seconds,
-            "end_to_end_seconds": end_to_end_seconds,
+            "resident_request_seconds": resident_request_seconds,
         },
         "predictions": {
             "theta": bus_pred[:, 0].tolist(),

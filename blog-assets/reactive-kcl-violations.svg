@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="608" height="654" viewBox="0 0 608 654" role="img" aria-labelledby="title desc">
+<title id="title">Reactive-power KCL violation</title>
+<desc id="desc">Data table from the GridSFM and AC-OPF benchmark.</desc>
+<style>
+.title{font:700 25px Inter,Arial,sans-serif;fill:#F5F2FF}
+.head{font:600 14px Inter,Arial,sans-serif;fill:#F5F2FF}
+.cell{font:500 15px Inter,Arial,sans-serif;fill:#F5F2FF;font-variant-numeric:tabular-nums}
+.em{font-weight:700;fill:#55D6B4}
+.summary{font-weight:700;fill:#A970FF}
+.warning{fill:#F3C969}
+</style>
+<rect width="608" height="654" rx="18" fill="#020510"/>
+<rect x="28" y="68" width="552" height="564" rx="10" fill="#070D1F" stroke="#18234B"/>
+<text class="title" x="28" y="40">Reactive-power KCL violation</text>
+<path d="M 28 120 H 580" stroke="#18234B"/>
+<path d="M 34 54 H 102" stroke="#A970FF" stroke-width="3"/>
+<text class="head" text-anchor="start" x="42" y="100">Network</text>
+<text class="head" text-anchor="end" x="404" y="100">GridSFM KCL-Q MAE</text>
+<text class="head" text-anchor="end" x="566" y="100">AC-OPF KCL-Q MAE</text>
+<text class="cell summary" text-anchor="start" x="42" y="148">Ohio</text>
+<text class="cell summary" text-anchor="end" x="404" y="148">1.08590</text>
+<text class="cell em" text-anchor="end" x="566" y="148">0.000000</text>
+<rect x="29" y="164" width="550" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 164 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="192">Colorado</text>
+<text class="cell summary" text-anchor="end" x="404" y="192">0.83523</text>
+<text class="cell em" text-anchor="end" x="566" y="192">0.000000</text>
+<path d="M 42 208 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="236">Arizona</text>
+<text class="cell summary" text-anchor="end" x="404" y="236">0.63995</text>
+<text class="cell em" text-anchor="end" x="566" y="236">0.000000</text>
+<rect x="29" y="252" width="550" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 252 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="280">Pennsylvania</text>
+<text class="cell summary" text-anchor="end" x="404" y="280">0.74018</text>
+<text class="cell em" text-anchor="end" x="566" y="280">0.000492</text>
+<path d="M 42 296 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="324">Indiana</text>
+<text class="cell summary" text-anchor="end" x="404" y="324">0.43454</text>
+<text class="cell em" text-anchor="end" x="566" y="324">0.000000</text>
+<rect x="29" y="340" width="550" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 340 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="368">case6470_rte</text>
+<text class="cell summary" text-anchor="end" x="404" y="368">1.89626</text>
+<text class="cell em" text-anchor="end" x="566" y="368">&lt;0.000001</text>
+<path d="M 42 384 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="412">case8387_pegase</text>
+<text class="cell summary" text-anchor="end" x="404" y="412">5.52824</text>
+<text class="cell em" text-anchor="end" x="566" y="412">&lt;0.000001</text>
+<rect x="29" y="428" width="550" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 428 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="456">case13659_pegase</text>
+<text class="cell summary" text-anchor="end" x="404" y="456">4.49173</text>
+<text class="cell em" text-anchor="end" x="566" y="456">&lt;0.000001</text>
+<path d="M 42 472 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="500">case20758_epigrids</text>
+<text class="cell summary" text-anchor="end" x="404" y="500">0.22283</text>
+<text class="cell em" text-anchor="end" x="566" y="500">&lt;0.000001</text>
+<rect x="29" y="516" width="550" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 516 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="544">case24464_goc*</text>
+<text class="cell summary" text-anchor="end" x="404" y="544">1.28459</text>
+<text class="cell em" text-anchor="end" x="566" y="544">&lt;0.000001</text>
+<path d="M 42 560 H 566" stroke="#18234B" opacity="0.8"/>
+<text class="cell summary" text-anchor="start" x="42" y="588">case78484_epigrids*</text>
+<text class="cell summary" text-anchor="end" x="404" y="588">0.12395</text>
+<text class="cell em" text-anchor="end" x="566" y="588">&lt;0.000001</text>
+</svg>

@@ -176,6 +176,19 @@ def evaluate(scenario_path: Path, prediction_path: Path, run_metadata_path: Path
     theta = error_metrics(pred["theta"], ref_theta, circular=True)
     theta["mae_degrees"] = math.degrees(theta["mae"])
     theta["rmse_degrees"] = math.degrees(theta["rmse"])
+    prediction_timing = prediction_doc["timing"]
+    # Older artifacts called the model-resident request "end_to_end_seconds".
+    # Treat that field as resident timing unless an explicit E2E scope proves
+    # it was recorded by the external request observer.
+    resident_request_seconds = prediction_timing.get(
+        "resident_request_seconds",
+        prediction_timing.get("end_to_end_seconds"),
+    )
+    complete_e2e_seconds = (
+        prediction_timing.get("end_to_end_seconds")
+        if prediction_timing.get("end_to_end_scope")
+        else None
+    )
     return {
         "scenario": scenario_path.as_posix(),
         "prediction": prediction_path.as_posix(),
@@ -216,8 +229,11 @@ def evaluate(scenario_path: Path, prediction_path: Path, run_metadata_path: Path
         },
         "timing_seconds": {
             "ac_opf_solve": scenario["metadata"].get("solve_time_seconds"),
-            "gridsfm_forward": prediction_doc["timing"]["forward_seconds"],
-            "gridsfm_end_to_end": prediction_doc["timing"]["end_to_end_seconds"],
+            "ac_opf_ipopt_iterations": scenario["metadata"].get("ipopt_iterations"),
+            "gridsfm_forward": prediction_timing["forward_seconds"],
+            "gridsfm_resident_request": resident_request_seconds,
+            "gridsfm_end_to_end": complete_e2e_seconds,
+            "gridsfm_end_to_end_scope": prediction_timing.get("end_to_end_scope"),
         },
         "serving_metadata": json.loads(run_metadata_path.read_text()),
     }
@@ -229,6 +245,11 @@ def render_summary(result: dict[str, Any]) -> str:
     counts = result["counts"]
     signed_cost_percent = a["cost"]["signed_error"] / abs(a["cost"]["reference"]) * 100.0
     cost_direction = "higher" if signed_cost_percent > 0 else ("lower" if signed_cost_percent < 0 else "equal")
+    e2e_display = (
+        f"{t['gridsfm_end_to_end']:.3f} s"
+        if t["gridsfm_end_to_end"] is not None
+        else "not measured"
+    )
     return f"""# GridSFM Pilot Result
 
 Scenario: `{result['scenario']}`  
@@ -260,7 +281,8 @@ AC-OPF status: `{result['status']}`
 | AC-OPF overloaded branches | {ap['thermal']['overloaded_branch_count']} / {ap['thermal']['rated_branch_count']} ({ap['thermal']['overload_fraction']:.2%}) |
 | AC-OPF solve | {t['ac_opf_solve']:.3f} s |
 | GridSFM forward | {t['gridsfm_forward']:.3f} s |
-| GridSFM end-to-end | {t['gridsfm_end_to_end']:.3f} s |
+| GridSFM resident request | {t['gridsfm_resident_request']:.3f} s |
+| GridSFM cold request E2E | {e2e_display} |
 
 All power errors use the dataset's per-unit convention. GridSFM KCL uses the branch flows produced by the inference π-model; AC-OPF KCL uses the exported solver branch flows. Thermal overload counts ignore excesses of at most {THERMAL_OVERLOAD_TOL_PU:.0e} pu as numerical tolerance.
 """

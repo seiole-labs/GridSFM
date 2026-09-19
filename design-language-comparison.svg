@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1840" viewBox="0 0 1600 1840">
+  <style>
+    text { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .title { font-size: 27px; font-weight: 700; letter-spacing: -0.5px; }
+    .number { font-size: 18px; font-weight: 800; letter-spacing: 1.5px; }
+    .subtitle { font-size: 14px; font-weight: 500; letter-spacing: 0.8px; }
+    .label { font-size: 13px; font-weight: 600; letter-spacing: 0.4px; }
+    .tick { font-size: 11px; font-weight: 500; }
+    .metric { font-size: 35px; font-weight: 720; letter-spacing: -1px; }
+    .grid { stroke-width: 1; stroke-dasharray: 2 7; }
+    .primary-line { fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .secondary-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82; }
+  </style>
+
+  <rect width="1600" height="1840" fill="#05070B"/>
+  <text x="70" y="62" fill="#F4F7FB" font-size="31" font-weight="750" letter-spacing="-0.8">Deep-tech plot language study</text>
+  <text x="70" y="91" fill="#7F8998" font-size="15">Identical data and layout · compare visual character, hierarchy, and contrast</text>
+
+  <!-- 1 · Obsidian Ion -->
+  <g transform="translate(60 125)" style="--bg:#080B12;--surface:#101725;--text:#E7EEF8;--muted:#8290A5;--grid:#263244;--p:#35D7FF;--s:#8B7CFF;--hi:#A8FF60;--err:#FF6B7A">
+    <rect width="1480" height="310" rx="22" fill="var(--bg)" stroke="var(--grid)"/>
+    <rect x="22" y="22" width="48" height="32" rx="8" fill="var(--p)"/><text x="46" y="44" text-anchor="middle" class="number" fill="var(--bg)">01</text>
+    <text x="88" y="46" class="title" fill="var(--text)">Obsidian Ion</text>
+    <text x="88" y="69" class="subtitle" fill="var(--muted)">PRECISE · BALANCED · RESEARCH-GRADE</text>
+    <text x="1120" y="42" class="label" fill="var(--muted)">MODEL ACCURACY</text><text x="1120" y="78" class="metric" fill="var(--text)">94.8%</text>
+    <text x="1270" y="71" class="label" fill="var(--hi)">▲ 3.2%</text>
+    <rect x="25" y="92" width="1015" height="190" rx="13" fill="var(--surface)"/>
+    <text x="48" y="119" class="label" fill="var(--text)">Training dynamics</text><text x="954" y="119" class="tick" fill="var(--muted)">24 epochs</text>
+    <g stroke="var(--grid)" class="grid"><line x1="48" y1="143" x2="1015" y2="143"/><line x1="48" y1="181" x2="1015" y2="181"/><line x1="48" y1="219" x2="1015" y2="219"/><line x1="48" y1="257" x2="1015" y2="257"/></g>
+    <polyline class="secondary-line" stroke="var(--s)" points="48,247 95,239 142,245 189,224 236,229 283,210 330,215 377,194 424,200 471,178 518,183 565,169 612,171 659,156 706,162 753,148 800,153 847,139 894,143 941,133 1015,137"/>
+    <polyline class="primary-line" stroke="var(--p)" points="48,252 95,246 142,235 189,239 236,216 283,220 330,197 377,203 424,177 471,184 518,161 565,166 612,148 659,152 706,139 753,143 800,131 847,134 894,123 941,127 1015,113"/>
+    <circle cx="1015" cy="113" r="7" fill="var(--hi)" stroke="var(--surface)" stroke-width="4"/>
+    <rect x="1060" y="102" width="395" height="180" rx="13" fill="var(--surface)"/>
+    <text x="1084" y="129" class="label" fill="var(--text)">Latency by stage</text>
+    <g fill="var(--muted)" class="tick"><text x="1084" y="163">ENCODE</text><text x="1084" y="203">MATCH</text><text x="1084" y="243">SOLVE</text></g>
+    <rect x="1160" y="149" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="149" width="174" height="14" rx="7" fill="var(--p)"/>
+    <rect x="1160" y="189" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="189" width="128" height="14" rx="7" fill="var(--s)"/>
+    <rect x="1160" y="229" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="229" width="205" height="14" rx="7" fill="var(--hi)"/>
+  </g>
+
+  <!-- 2 · Arctic Lab -->
+  <g transform="translate(60 455)" style="--bg:#F6F8FB;--surface:#FFFFFF;--text:#172033;--muted:#667085;--grid:#D9E0EA;--p:#006DFF;--s:#6E56CF;--hi:#00A896;--err:#E24A5A">
+    <rect width="1480" height="310" rx="22" fill="var(--bg)" stroke="var(--grid)"/>
+    <rect x="22" y="22" width="48" height="32" rx="8" fill="var(--p)"/><text x="46" y="44" text-anchor="middle" class="number" fill="white">02</text>
+    <text x="88" y="46" class="title" fill="var(--text)">Arctic Lab</text><text x="88" y="69" class="subtitle" fill="var(--muted)">CLINICAL · CLEAR · PUBLICATION-READY</text>
+    <text x="1120" y="42" class="label" fill="var(--muted)">MODEL ACCURACY</text><text x="1120" y="78" class="metric" fill="var(--text)">94.8%</text><text x="1270" y="71" class="label" fill="var(--hi)">▲ 3.2%</text>
+    <rect x="25" y="92" width="1015" height="190" rx="13" fill="var(--surface)" stroke="var(--grid)"/>
+    <text x="48" y="119" class="label" fill="var(--text)">Training dynamics</text><text x="954" y="119" class="tick" fill="var(--muted)">24 epochs</text>
+    <g stroke="var(--grid)" class="grid"><line x1="48" y1="143" x2="1015" y2="143"/><line x1="48" y1="181" x2="1015" y2="181"/><line x1="48" y1="219" x2="1015" y2="219"/><line x1="48" y1="257" x2="1015" y2="257"/></g>
+    <polyline class="secondary-line" stroke="var(--s)" points="48,247 95,239 142,245 189,224 236,229 283,210 330,215 377,194 424,200 471,178 518,183 565,169 612,171 659,156 706,162 753,148 800,153 847,139 894,143 941,133 1015,137"/>
+    <polyline class="primary-line" stroke="var(--p)" points="48,252 95,246 142,235 189,239 236,216 283,220 330,197 377,203 424,177 471,184 518,161 565,166 612,148 659,152 706,139 753,143 800,131 847,134 894,123 941,127 1015,113"/>
+    <circle cx="1015" cy="113" r="7" fill="var(--hi)" stroke="var(--surface)" stroke-width="4"/>
+    <rect x="1060" y="102" width="395" height="180" rx="13" fill="var(--surface)" stroke="var(--grid)"/>
+    <text x="1084" y="129" class="label" fill="var(--text)">Latency by stage</text>
+    <g fill="var(--muted)" class="tick"><text x="1084" y="163">ENCODE</text><text x="1084" y="203">MATCH</text><text x="1084" y="243">SOLVE</text></g>
+    <rect x="1160" y="149" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="149" width="174" height="14" rx="7" fill="var(--p)"/>
+    <rect x="1160" y="189" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="189" width="128" height="14" rx="7" fill="var(--s)"/>
+    <rect x="1160" y="229" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="229" width="205" height="14" rx="7" fill="var(--hi)"/>
+  </g>
+
+  <!-- 3 · Carbon Signal -->
+  <g transform="translate(60 785)" style="--bg:#0C0D0E;--surface:#151719;--text:#F2F4F5;--muted:#8B929A;--grid:#30353A;--p:#E8FF47;--s:#56B4FF;--hi:#B58CFF;--err:#FF625F">
+    <rect width="1480" height="310" rx="22" fill="var(--bg)" stroke="var(--grid)"/>
+    <rect x="22" y="22" width="48" height="32" rx="8" fill="var(--p)"/><text x="46" y="44" text-anchor="middle" class="number" fill="var(--bg)">03</text>
+    <text x="88" y="46" class="title" fill="var(--text)">Carbon Signal</text><text x="88" y="69" class="subtitle" fill="var(--muted)">BOLD · EXPERIMENTAL · HIGH-SIGNAL</text>
+    <text x="1120" y="42" class="label" fill="var(--muted)">MODEL ACCURACY</text><text x="1120" y="78" class="metric" fill="var(--text)">94.8%</text><text x="1270" y="71" class="label" fill="var(--p)">▲ 3.2%</text>
+    <rect x="25" y="92" width="1015" height="190" rx="13" fill="var(--surface)"/>
+    <text x="48" y="119" class="label" fill="var(--text)">Training dynamics</text><text x="954" y="119" class="tick" fill="var(--muted)">24 epochs</text>
+    <g stroke="var(--grid)" class="grid"><line x1="48" y1="143" x2="1015" y2="143"/><line x1="48" y1="181" x2="1015" y2="181"/><line x1="48" y1="219" x2="1015" y2="219"/><line x1="48" y1="257" x2="1015" y2="257"/></g>
+    <polyline class="secondary-line" stroke="var(--s)" points="48,247 95,239 142,245 189,224 236,229 283,210 330,215 377,194 424,200 471,178 518,183 565,169 612,171 659,156 706,162 753,148 800,153 847,139 894,143 941,133 1015,137"/>
+    <polyline class="primary-line" stroke="var(--p)" points="48,252 95,246 142,235 189,239 236,216 283,220 330,197 377,203 424,177 471,184 518,161 565,166 612,148 659,152 706,139 753,143 800,131 847,134 894,123 941,127 1015,113"/>
+    <circle cx="1015" cy="113" r="7" fill="var(--hi)" stroke="var(--surface)" stroke-width="4"/>
+    <rect x="1060" y="102" width="395" height="180" rx="13" fill="var(--surface)"/>
+    <text x="1084" y="129" class="label" fill="var(--text)">Latency by stage</text>
+    <g fill="var(--muted)" class="tick"><text x="1084" y="163">ENCODE</text><text x="1084" y="203">MATCH</text><text x="1084" y="243">SOLVE</text></g>
+    <rect x="1160" y="149" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="149" width="174" height="14" rx="7" fill="var(--p)"/>
+    <rect x="1160" y="189" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="189" width="128" height="14" rx="7" fill="var(--s)"/>
+    <rect x="1160" y="229" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="229" width="205" height="14" rx="7" fill="var(--hi)"/>
+  </g>
+
+  <!-- 4 · Midnight Spectrum -->
+  <g transform="translate(60 1115)" style="--bg:#07111A;--surface:#0C1B27;--text:#DDECF4;--muted:#7E98A8;--grid:#1E3947;--p:#20E0C2;--s:#4D9CFF;--hi:#E76BF3;--err:#FF667D">
+    <rect width="1480" height="310" rx="22" fill="var(--bg)" stroke="var(--grid)"/>
+    <rect x="22" y="22" width="48" height="32" rx="8" fill="var(--p)"/><text x="46" y="44" text-anchor="middle" class="number" fill="var(--bg)">04</text>
+    <text x="88" y="46" class="title" fill="var(--text)">Midnight Spectrum</text><text x="88" y="69" class="subtitle" fill="var(--muted)">CYBER-SCIENTIFIC · RICH · MULTIDIMENSIONAL</text>
+    <text x="1120" y="42" class="label" fill="var(--muted)">MODEL ACCURACY</text><text x="1120" y="78" class="metric" fill="var(--text)">94.8%</text><text x="1270" y="71" class="label" fill="var(--p)">▲ 3.2%</text>
+    <rect x="25" y="92" width="1015" height="190" rx="13" fill="var(--surface)"/>
+    <text x="48" y="119" class="label" fill="var(--text)">Training dynamics</text><text x="954" y="119" class="tick" fill="var(--muted)">24 epochs</text>
+    <g stroke="var(--grid)" class="grid"><line x1="48" y1="143" x2="1015" y2="143"/><line x1="48" y1="181" x2="1015" y2="181"/><line x1="48" y1="219" x2="1015" y2="219"/><line x1="48" y1="257" x2="1015" y2="257"/></g>
+    <polyline class="secondary-line" stroke="var(--s)" points="48,247 95,239 142,245 189,224 236,229 283,210 330,215 377,194 424,200 471,178 518,183 565,169 612,171 659,156 706,162 753,148 800,153 847,139 894,143 941,133 1015,137"/>
+    <polyline class="primary-line" stroke="var(--p)" points="48,252 95,246 142,235 189,239 236,216 283,220 330,197 377,203 424,177 471,184 518,161 565,166 612,148 659,152 706,139 753,143 800,131 847,134 894,123 941,127 1015,113"/>
+    <circle cx="1015" cy="113" r="7" fill="var(--hi)" stroke="var(--surface)" stroke-width="4"/>
+    <rect x="1060" y="102" width="395" height="180" rx="13" fill="var(--surface)"/>
+    <text x="1084" y="129" class="label" fill="var(--text)">Latency by stage</text>
+    <g fill="var(--muted)" class="tick"><text x="1084" y="163">ENCODE</text><text x="1084" y="203">MATCH</text><text x="1084" y="243">SOLVE</text></g>
+    <rect x="1160" y="149" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="149" width="174" height="14" rx="7" fill="var(--p)"/>
+    <rect x="1160" y="189" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="189" width="128" height="14" rx="7" fill="var(--s)"/>
+    <rect x="1160" y="229" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="229" width="205" height="14" rx="7" fill="var(--hi)"/>
+  </g>
+
+  <!-- 5 · Graphite Cobalt -->
+  <g transform="translate(60 1445)" style="--bg:#0B0E14;--surface:#121722;--text:#E9EDF4;--muted:#7D8796;--grid:#28303D;--p:#4C8DFF;--s:#90A4C3;--hi:#FFFFFF;--err:#FF5C7A">
+    <rect width="1480" height="310" rx="22" fill="var(--bg)" stroke="var(--grid)"/>
+    <rect x="22" y="22" width="48" height="32" rx="8" fill="var(--p)"/><text x="46" y="44" text-anchor="middle" class="number" fill="white">05</text>
+    <text x="88" y="46" class="title" fill="var(--text)">Graphite Cobalt</text><text x="88" y="69" class="subtitle" fill="var(--muted)">RESTRAINED · PROFESSIONAL · TIMELESS</text>
+    <text x="1120" y="42" class="label" fill="var(--muted)">MODEL ACCURACY</text><text x="1120" y="78" class="metric" fill="var(--text)">94.8%</text><text x="1270" y="71" class="label" fill="var(--p)">▲ 3.2%</text>
+    <rect x="25" y="92" width="1015" height="190" rx="13" fill="var(--surface)"/>
+    <text x="48" y="119" class="label" fill="var(--text)">Training dynamics</text><text x="954" y="119" class="tick" fill="var(--muted)">24 epochs</text>
+    <g stroke="var(--grid)" class="grid"><line x1="48" y1="143" x2="1015" y2="143"/><line x1="48" y1="181" x2="1015" y2="181"/><line x1="48" y1="219" x2="1015" y2="219"/><line x1="48" y1="257" x2="1015" y2="257"/></g>
+    <polyline class="secondary-line" stroke="var(--s)" points="48,247 95,239 142,245 189,224 236,229 283,210 330,215 377,194 424,200 471,178 518,183 565,169 612,171 659,156 706,162 753,148 800,153 847,139 894,143 941,133 1015,137"/>
+    <polyline class="primary-line" stroke="var(--p)" points="48,252 95,246 142,235 189,239 236,216 283,220 330,197 377,203 424,177 471,184 518,161 565,166 612,148 659,152 706,139 753,143 800,131 847,134 894,123 941,127 1015,113"/>
+    <circle cx="1015" cy="113" r="7" fill="var(--hi)" stroke="var(--surface)" stroke-width="4"/>
+    <rect x="1060" y="102" width="395" height="180" rx="13" fill="var(--surface)"/>
+    <text x="1084" y="129" class="label" fill="var(--text)">Latency by stage</text>
+    <g fill="var(--muted)" class="tick"><text x="1084" y="163">ENCODE</text><text x="1084" y="203">MATCH</text><text x="1084" y="243">SOLVE</text></g>
+    <rect x="1160" y="149" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="149" width="174" height="14" rx="7" fill="var(--p)"/>
+    <rect x="1160" y="189" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="189" width="128" height="14" rx="7" fill="var(--s)"/>
+    <rect x="1160" y="229" width="238" height="14" rx="7" fill="var(--grid)"/><rect x="1160" y="229" width="205" height="14" rx="7" fill="var(--hi)"/>
+  </g>
+
+  <text x="800" y="1803" text-anchor="middle" fill="#697485" font-size="13" letter-spacing="1.2">PALETTE STUDY · SAME VISUAL GRAMMAR · FIVE COLOR SYSTEMS</text>
+</svg>

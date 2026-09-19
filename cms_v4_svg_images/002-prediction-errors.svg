@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1161" height="786" viewBox="0 0 1161 786" role="img" aria-labelledby="title desc">
+<title id="title">Prediction error against AC-OPF</title>
+<desc id="desc">Data table from the GridSFM and AC-OPF benchmark.</desc>
+<style>
+.title{font:700 25px Inter,Arial,sans-serif;fill:#F5F2FF}
+.head{font:600 14px Inter,Arial,sans-serif;fill:#F5F2FF}
+.cell{font:500 15px Inter,Arial,sans-serif;fill:#F5F2FF;font-variant-numeric:tabular-nums}
+.em{font-weight:700;fill:#55D6B4}
+.summary{font-weight:700;fill:#A970FF}
+.warning{fill:#F3C969}
+</style>
+<rect width="1161" height="786" rx="18" fill="#020510"/>
+<rect x="28" y="68" width="1105" height="696" rx="10" fill="#070D1F" stroke="#18234B"/>
+<text class="title" x="28" y="40">Prediction error against AC-OPF</text>
+<path d="M 28 120 H 1133" stroke="#18234B"/>
+<path d="M 34 54 H 102" stroke="#A970FF" stroke-width="3"/>
+<text class="head" text-anchor="start" x="42" y="100">Network</text>
+<text class="head" text-anchor="end" x="359" y="100">Cost MAPE</text>
+<text class="head" text-anchor="end" x="484" y="100">V MAE</text>
+<text class="head" text-anchor="end" x="609" y="100">Angle MAE</text>
+<text class="head" text-anchor="end" x="734" y="100">Pg MAE</text>
+<text class="head" text-anchor="end" x="859" y="100">Qg MAE</text>
+<text class="head" text-anchor="end" x="989" y="100">Branch P MAE</text>
+<text class="head" text-anchor="end" x="1119" y="100">Branch Q MAE</text>
+<text class="cell" text-anchor="start" x="42" y="148">Ohio</text>
+<text class="cell" text-anchor="end" x="359" y="148">14.504%</text>
+<text class="cell" text-anchor="end" x="484" y="148">0.01087</text>
+<text class="cell" text-anchor="end" x="609" y="148">3.865°</text>
+<text class="cell" text-anchor="end" x="734" y="148">0.12754</text>
+<text class="cell" text-anchor="end" x="859" y="148">0.28349</text>
+<text class="cell" text-anchor="end" x="989" y="148">0.09659</text>
+<text class="cell" text-anchor="end" x="1119" y="148">0.37691</text>
+<rect x="29" y="164" width="1103" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 164 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="192">Colorado</text>
+<text class="cell" text-anchor="end" x="359" y="192">12.512%</text>
+<text class="cell" text-anchor="end" x="484" y="192">0.00427</text>
+<text class="cell" text-anchor="end" x="609" y="192">3.446°</text>
+<text class="cell" text-anchor="end" x="734" y="192">0.06640</text>
+<text class="cell" text-anchor="end" x="859" y="192">0.11382</text>
+<text class="cell" text-anchor="end" x="989" y="192">0.06139</text>
+<text class="cell" text-anchor="end" x="1119" y="192">0.29482</text>
+<path d="M 42 208 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="236">Arizona</text>
+<text class="cell" text-anchor="end" x="359" y="236">14.858%</text>
+<text class="cell" text-anchor="end" x="484" y="236">0.00386</text>
+<text class="cell" text-anchor="end" x="609" y="236">0.873°</text>
+<text class="cell" text-anchor="end" x="734" y="236">0.09519</text>
+<text class="cell" text-anchor="end" x="859" y="236">0.09607</text>
+<text class="cell" text-anchor="end" x="989" y="236">0.05396</text>
+<text class="cell" text-anchor="end" x="1119" y="236">0.21358</text>
+<rect x="29" y="252" width="1103" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 252 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="280">Pennsylvania</text>
+<text class="cell" text-anchor="end" x="359" y="280">1.507%</text>
+<text class="cell" text-anchor="end" x="484" y="280">0.00541</text>
+<text class="cell" text-anchor="end" x="609" y="280">1.286°</text>
+<text class="cell" text-anchor="end" x="734" y="280">0.07925</text>
+<text class="cell" text-anchor="end" x="859" y="280">0.13972</text>
+<text class="cell" text-anchor="end" x="989" y="280">0.04698</text>
+<text class="cell" text-anchor="end" x="1119" y="280">0.25054</text>
+<path d="M 42 296 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="324">Indiana</text>
+<text class="cell" text-anchor="end" x="359" y="324">10.511%</text>
+<text class="cell" text-anchor="end" x="484" y="324">0.00597</text>
+<text class="cell" text-anchor="end" x="609" y="324">0.621°</text>
+<text class="cell" text-anchor="end" x="734" y="324">0.06280</text>
+<text class="cell" text-anchor="end" x="859" y="324">0.10019</text>
+<text class="cell" text-anchor="end" x="989" y="324">0.02795</text>
+<text class="cell" text-anchor="end" x="1119" y="324">0.15896</text>
+<rect x="29" y="340" width="1103" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 340 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell em" text-anchor="start" x="42" y="368">Almost-ID mean</text>
+<text class="cell em" text-anchor="end" x="359" y="368">10.778%</text>
+<text class="cell em" text-anchor="end" x="484" y="368">0.00608</text>
+<text class="cell em" text-anchor="end" x="609" y="368">2.018°</text>
+<text class="cell em" text-anchor="end" x="734" y="368">0.08624</text>
+<text class="cell em" text-anchor="end" x="859" y="368">0.14666</text>
+<text class="cell em" text-anchor="end" x="989" y="368">0.05737</text>
+<text class="cell em" text-anchor="end" x="1119" y="368">0.25896</text>
+<path d="M 42 384 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="412">case6470_rte</text>
+<text class="cell" text-anchor="end" x="359" y="412">2.604%</text>
+<text class="cell" text-anchor="end" x="484" y="412">0.02230</text>
+<text class="cell" text-anchor="end" x="609" y="412">1.328°</text>
+<text class="cell" text-anchor="end" x="734" y="412">0.08909</text>
+<text class="cell" text-anchor="end" x="859" y="412">0.22643</text>
+<text class="cell" text-anchor="end" x="989" y="412">0.30210</text>
+<text class="cell" text-anchor="end" x="1119" y="412">0.84593</text>
+<rect x="29" y="428" width="1103" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 428 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="456">case8387_pegase</text>
+<text class="cell" text-anchor="end" x="359" y="456">228.950%</text>
+<text class="cell" text-anchor="end" x="484" y="456">0.05137</text>
+<text class="cell" text-anchor="end" x="609" y="456">54.735°</text>
+<text class="cell" text-anchor="end" x="734" y="456">3.54572</text>
+<text class="cell" text-anchor="end" x="859" y="456">1.04702</text>
+<text class="cell" text-anchor="end" x="989" y="456">1.57288</text>
+<text class="cell" text-anchor="end" x="1119" y="456">2.10694</text>
+<path d="M 42 472 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="500">case13659_pegase</text>
+<text class="cell" text-anchor="end" x="359" y="500">6.624%</text>
+<text class="cell" text-anchor="end" x="484" y="500">0.04761</text>
+<text class="cell" text-anchor="end" x="609" y="500">41.811°</text>
+<text class="cell" text-anchor="end" x="734" y="500">0.12968</text>
+<text class="cell" text-anchor="end" x="859" y="500">0.38679</text>
+<text class="cell" text-anchor="end" x="989" y="500">0.92241</text>
+<text class="cell" text-anchor="end" x="1119" y="500">1.79731</text>
+<rect x="29" y="516" width="1103" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 516 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell" text-anchor="start" x="42" y="544">case20758_epigrids</text>
+<text class="cell" text-anchor="end" x="359" y="544">18.834%</text>
+<text class="cell" text-anchor="end" x="484" y="544">0.06632</text>
+<text class="cell" text-anchor="end" x="609" y="544">13.620°</text>
+<text class="cell" text-anchor="end" x="734" y="544">0.22682</text>
+<text class="cell" text-anchor="end" x="859" y="544">0.15346</text>
+<text class="cell" text-anchor="end" x="989" y="544">0.09933</text>
+<text class="cell" text-anchor="end" x="1119" y="544">0.13590</text>
+<path d="M 42 560 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell em" text-anchor="start" x="42" y="588">Accepted OOD mean</text>
+<text class="cell em" text-anchor="end" x="359" y="588">64.253%</text>
+<text class="cell em" text-anchor="end" x="484" y="588">0.04690</text>
+<text class="cell em" text-anchor="end" x="609" y="588">27.873°</text>
+<text class="cell em" text-anchor="end" x="734" y="588">0.99783</text>
+<text class="cell em" text-anchor="end" x="859" y="588">0.45342</text>
+<text class="cell em" text-anchor="end" x="989" y="588">0.72418</text>
+<text class="cell em" text-anchor="end" x="1119" y="588">1.22152</text>
+<rect x="29" y="604" width="1103" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 604 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell em" text-anchor="start" x="42" y="632">Accepted OOD median</text>
+<text class="cell em" text-anchor="end" x="359" y="632">12.729%</text>
+<text class="cell em" text-anchor="end" x="484" y="632">0.04949</text>
+<text class="cell em" text-anchor="end" x="609" y="632">27.715°</text>
+<text class="cell em" text-anchor="end" x="734" y="632">0.17825</text>
+<text class="cell em" text-anchor="end" x="859" y="632">0.30661</text>
+<text class="cell em" text-anchor="end" x="989" y="632">0.61225</text>
+<text class="cell em" text-anchor="end" x="1119" y="632">1.32162</text>
+<path d="M 42 648 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell warning" text-anchor="start" x="42" y="676">case24464_goc*</text>
+<text class="cell" text-anchor="end" x="359" y="676">34.905%</text>
+<text class="cell" text-anchor="end" x="484" y="676">0.10262</text>
+<text class="cell" text-anchor="end" x="609" y="676">60.158°</text>
+<text class="cell" text-anchor="end" x="734" y="676">0.55069</text>
+<text class="cell" text-anchor="end" x="859" y="676">0.28756</text>
+<text class="cell" text-anchor="end" x="989" y="676">0.14830</text>
+<text class="cell" text-anchor="end" x="1119" y="676">0.47367</text>
+<rect x="29" y="692" width="1103" height="44" fill="#0B1228" opacity="0.52"/>
+<path d="M 42 692 H 1119" stroke="#18234B" opacity="0.8"/>
+<text class="cell warning" text-anchor="start" x="42" y="720">case78484_epigrids*</text>
+<text class="cell" text-anchor="end" x="359" y="720">15.386%</text>
+<text class="cell" text-anchor="end" x="484" y="720">0.07506</text>
+<text class="cell" text-anchor="end" x="609" y="720">93.442°</text>
+<text class="cell" text-anchor="end" x="734" y="720">0.26395</text>
+<text class="cell" text-anchor="end" x="859" y="720">0.36985</text>
+<text class="cell" text-anchor="end" x="989" y="720">0.25182</text>
+<text class="cell" text-anchor="end" x="1119" y="720">0.13211</text>
+</svg>

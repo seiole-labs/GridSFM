@@ -60,6 +60,10 @@ def load_rows(output_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
                     "seed_preparation_seconds": record["seed_preparation_seconds"],
                     "ac_model_build_seconds": record["ac_model_build_seconds"],
                     "ac_solver_reported_seconds": record["ac_solver_reported_seconds"],
+                    "ac_ipopt_iterations": record.get("ac_ipopt_iterations"),
+                    "dc_seed_ipopt_iterations": record.get("dc_presolve", {}).get(
+                        "ipopt_iterations"
+                    ),
                     "ac_solve_wall_seconds": record["ac_solve_wall_seconds"],
                     "seeded_total_seconds": record["seeded_total_seconds"],
                     "workflow_e2e_seconds": record["workflow_e2e_seconds"],
@@ -104,6 +108,18 @@ def summarize(config: dict[str, Any], rows: list[dict[str, Any]]) -> dict[str, A
                 "all_converged": all(row["converged"] for row in arm_rows),
                 **{f"median_{key}": median([float(row[key]) for row in arm_rows]) for key in numeric},
             }
+            ac_iterations = [
+                float(row["ac_ipopt_iterations"])
+                for row in arm_rows
+                if row["ac_ipopt_iterations"] is not None
+            ]
+            dc_seed_iterations = [
+                float(row["dc_seed_ipopt_iterations"])
+                for row in arm_rows
+                if row["dc_seed_ipopt_iterations"] is not None
+            ]
+            scenario[arm]["median_ac_ipopt_iterations"] = median(ac_iterations)
+            scenario[arm]["median_dc_seed_ipopt_iterations"] = median(dc_seed_iterations)
             for key in ERROR_KEYS:
                 values = [row[f"{key}_max_abs"] for row in arm_rows if row[f"{key}_max_abs"] is not None]
                 scenario[arm][f"maximum_{key}_absolute_difference"] = max(values, default=None)
@@ -137,6 +153,14 @@ def summarize(config: dict[str, Any], rows: list[dict[str, Any]]) -> dict[str, A
             ),
             "median_of_scenario_median_ac_only_speedup_vs_cold": median(
                 [value["median_ac_only_speedup_vs_cold"] for value in available]
+            ),
+            "median_of_scenario_median_ac_ipopt_iterations": median(
+                [
+                    value["median_ac_ipopt_iterations"]
+                    for value in available
+                    if value["median_ac_ipopt_iterations"]
+                    == value["median_ac_ipopt_iterations"]
+                ]
             ),
         }
     comparisons = {
@@ -258,17 +282,18 @@ def markdown(config: dict[str, Any], result: dict[str, Any]) -> str:
         )
     lines.extend([
         "",
-        "Times are seconds. Seeded total is seed preparation plus the solver-reported seeded AC time. GridSFM presolve uses the saved inference E2E measurement plus current ID mapping; this batch does not re-run neural inference inside Julia. DC presolve is measured directly and includes DC model construction, solve, extraction, and mapping.",
+        "Times are seconds. Seeded total is seed preparation plus the solver-reported seeded AC time. GridSFM presolve uses the saved resident-request measurement plus current ID mapping; this batch does not re-run neural inference inside Julia. DC presolve is measured directly and includes DC model construction, solve, extraction, and mapping.",
         "",
         "## Overall median of scenario medians",
         "",
-        "| Arm | AC solver only | AC-only speedup | Seeded total | Workflow E2E | Total speedup | All converged |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "| Arm | AC solver only | AC Ipopt iterations | AC-only speedup | Seeded total | Workflow E2E | Total speedup | All converged |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ])
     for arm in ARMS:
         value = result["overall"][arm]
         lines.append(
             f"| `{arm}` | {fmt(value['median_of_scenario_median_ac_solver_reported_seconds'])} s | "
+            f"{fmt(value['median_of_scenario_median_ac_ipopt_iterations'], 1)} | "
             f"{fmt(value['median_of_scenario_median_ac_only_speedup_vs_cold'], 2)}× | "
             f"{fmt(value['median_of_scenario_median_seeded_total_seconds'])} s | "
             f"{fmt(value['median_of_scenario_median_workflow_e2e_seconds'])} s | "

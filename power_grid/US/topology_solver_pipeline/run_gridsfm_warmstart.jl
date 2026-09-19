@@ -29,6 +29,15 @@ const REQUIRED_PREDICTIONS = ("Pg", "theta")
 _success(term) = any(s -> occursin(s, uppercase(term)),
                      ["LOCALLY_SOLVED", "OPTIMAL", "ALMOST_LOCALLY_SOLVED"])
 
+"Return Ipopt's reported barrier iteration count when the optimizer exposes it."
+function _ipopt_iterations(pm)
+    try
+        Int(JuMP.barrier_iterations(pm.model))
+    catch
+        nothing
+    end
+end
+
 function _load_dict(path::AbstractString)
     open(path) do io
         JSON3.read(io, Dict{String,Any})
@@ -249,7 +258,12 @@ function run_warmstart(network_path, pyg_path, prediction_path)
     differences = haskey(result, "solution") ?
         _solution_differences(pyg, result["solution"]) : nothing
     recorded_presolve = try
-        Float64(prediction["timing"]["end_to_end_seconds"])
+        timing = prediction["timing"]
+        Float64(
+            haskey(timing, "resident_request_seconds") ?
+            timing["resident_request_seconds"] :
+            timing["end_to_end_seconds"]
+        )
     catch
         nothing
     end
@@ -285,6 +299,7 @@ function run_warmstart(network_path, pyg_path, prediction_path)
             "model_build_seconds" => build_seconds,
             "solve_wall_seconds" => solve_wall_seconds,
             "solver_reported_solve_seconds" => get(result, "solve_time", nothing),
+            "ipopt_iterations" => _ipopt_iterations(pm),
             "recorded_gridsfm_presolve_seconds" => recorded_presolve,
             "recorded_presolve_plus_solve_seconds" =>
                 recorded_presolve === nothing ? nothing : recorded_presolve + solve_wall_seconds,

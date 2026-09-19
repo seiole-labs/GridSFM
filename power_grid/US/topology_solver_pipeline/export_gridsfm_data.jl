@@ -447,6 +447,11 @@ with any required relaxation applied.
 
     opf, feas = build_gridsfm_data(pm, result, net)
     opf["metadata"]["solve_time_seconds"] = elapsed
+    opf["metadata"]["ipopt_iterations"] = try
+        Int(JuMP.barrier_iterations(pm.model))
+    catch
+        nothing
+    end
     open(output_path, "w") do io
         JSON3.pretty(io, opf)
     end

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stress-testing GridSFM</title>
+<style>
+@page { size: A4; margin: 18mm; }
+body { font-family: "Liberation Sans", Arial, sans-serif; color: #11152B; font-size: 11pt; line-height: 1.5; }
+h1 { color: #25154A; font-size: 25pt; margin: 0 0 18pt; }
+h2 { color: #493986; font-size: 18pt; margin: 22pt 0 8pt; }
+h3 { color: #493986; font-size: 14pt; margin: 16pt 0 6pt; }
+p { margin: 0 0 9pt; }
+li { margin-bottom: 4pt; }
+a { color: #493986; text-decoration: underline; }
+img { display: block; width: 100%; height: auto; margin: 10pt auto 12pt; page-break-inside: avoid; }
+code { font-family: "Liberation Mono", monospace; background: #F0ECFA; }
+</style>
+</head>
+<body><h1>Stress-testing GridSFM: from familiar grids to large zero-shot AC-OPF</h1>
+<p>Can a small neural model approximate AC-OPF on grids far larger than anything it saw during training? We pushed GridSFM to its limits to find out.</p>
+<p>GridSFM is Microsoft Research's roughly 15-million-parameter model for predicting bus voltages, generator dispatch, branch flows, and grid feasibility from topology and operating conditions.</p>
+<p>Microsoft open-sourced GridSFM, making these experiments possible. We thank the authors. This work stands on their shoulders, and we highly encourage readers to explore the <a href="https://www.microsoft.com/en-us/research/project/gridfm/">GridFM project page</a> and <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2026/05/GridFM_white_paper.pdf">GridSFM white paper</a>.</p>
+<h2>Two evaluation regimes</h2>
+<p>We tested GridSFM-Open v1.1 against AC-OPF references in two regimes.</p>
+<p>The first is a validation-style, <strong>almost in-distribution</strong> cut. The <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2026/05/GridFM_white_paper.pdf">GridSFM white paper</a> states that grids from Microsoft's open US-grid pipeline were used during pretraining. Our five grids come from that pipeline, so this experiment tests new perturbations on familiar, training-exposed topologies. It does not test unseen-grid generalization.</p>
+<p>The second is a <strong>zero-shot topology-and-scale shift</strong> using large, unmodified networks from <a href="https://github.com/power-grid-lib/pglib-opf">PGLib-OPF</a>, the open benchmark introduced in the <a href="https://arxiv.org/abs/1908.02788">PGLib-OPF paper</a>. The <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2026/05/GridFM_white_paper.pdf">GridSFM white paper</a> says PGLib and OPFData were among its training sources, so this is not source-family OOD. However, every tested graph exceeds GridSFM-Open's reported 4,661-bus training maximum. Two accepted cases exceed that maximum by more than 2 times, and the largest exploratory run reaches 16.84 times it.</p>
+<p>This wording matters. “True OOD” would hide known overlap in data provenance. “Topology-and-scale shifted zero-shot evaluation” states exactly what the experiment establishes.</p>
+<h2>Methodology</h2>
+<p><strong>Benchmark hardware:</strong> all GridSFM runs used batch size one on CPU. The recorded machine had an Intel Core Ultra 7 155U, 30.87 GiB RAM, and no GPU.</p>
+<h3>Almost-ID perturbation test</h3>
+<p>We started with Ohio, Colorado, Arizona, Pennsylvania, and Indiana models produced by Microsoft's open-data pipeline. That pipeline reconstructs OPF-solvable transmission models from public sources including OpenStreetMap, EIA data, and US Census data; its design is described in <a href="https://arxiv.org/abs/2605.04289"><em>Building Power Grid Models from Open Data: A Complete Pipeline from OpenStreetMap to Optimal Power Flow</em></a>.</p>
+<p>Following the perturbation families in Section 5 of the <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2026/05/GridFM_white_paper.pdf">GridSFM white paper</a>, we chained five transformations:</p>
+<ol>
+<li>Load scaling and local demand jitter.</li>
+<li>Generator outage.</li>
+<li>Branch-rating derating.</li>
+<li>Voltage-limit tightening.</li>
+<li>Generator-cost reshuffling.</li>
+</ol>
+<p>Each scenario started from a fresh base grid. Every transformation had its own activation rule, so one scenario could contain several simultaneous changes. We sampled until five AC-OPF-solvable scenarios were accepted for each topology: 25 scenarios total.</p>
+<p>The accepted samples realized system load factors from 0.8014 to 1.2408. Generator outages appeared in 3/25 scenarios, branch derating in 2/25, voltage tightening in 1/25, and cost reshuffling in all 25.</p>
+<h3>Large PGLib zero-shot test</h3>
+<p>For scale-shifted evaluation, we used vanilla PGLib-OPF base cases without further perturbation. PGLib-OPF was created as an open, standardized benchmark library for AC-OPF algorithms; see <a href="https://arxiv.org/abs/1908.02788"><em>The Power Grid Library for Benchmarking AC Optimal Power Flow Algorithms</em></a>.</p>
+<p>We evaluated six PGLib networks. Four form the accepted aggregate; <code>case24464_goc</code> and <code>case78484_epigrids</code> remain clearly marked exploratory because their preprocessing validation was incomplete.</p>
+<h2>Networks tested</h2>
+<p>Generator counts can vary within an almost-ID topology because some accepted perturbations include outages.</p>
+<p><img src="#harmful-link" alt="Networks tested" /></p>
+<p>* Exploratory result; excluded from accepted OOD aggregates.</p>
+<h2>Prediction error against AC-OPF</h2>
+<p>Almost-ID rows average five perturbations per topology. PGLib rows are individual base cases. All values except angle and cost are in per unit.</p>
+<p><img src="#harmful-link" alt="Prediction error against AC-OPF" /></p>
+<p>* Exploratory result; excluded from accepted OOD aggregates.</p>
+<p>The shift is visible: mean voltage error rises by about 7.7 times, angle error by 13.8 times, and active-power KCL error by 18.2 times. But scale alone does not explain every result. The 8,387-bus PEGASE case fails more severely than both larger accepted cases. Model family, topology, operating point, and feature distribution may all matter.</p>
+<p>The almost-ID results also leave room for improvement. Their mean cost error is 10.778%, and one individual perturbation reaches 68.353%. Familiar topology does not guarantee uniformly accurate dispatch.</p>
+<h2>KCL and thermal violations</h2>
+<p>Regression error is not the same as physical feasibility. GridSFM is physics-informed: training includes power-balance and operating-limit penalties, and branch flows are derived analytically. But inference does not hard-project the complete output onto the AC-OPF feasible set. A prediction can therefore have reasonable voltage or cost error while violating nodal balance or branch ratings.</p>
+<p>Lower is better. Better KCL result in each row is bold.</p>
+<h3>Active-power KCL violation</h3>
+<p><img src="#harmful-link" alt="Active-power KCL violation" /></p>
+<h3>Reactive-power KCL violation</h3>
+<p><img src="#harmful-link" alt="Reactive-power KCL violation" /></p>
+<p>* Exploratory result; excluded from accepted OOD aggregates.</p>
+<p>AC-OPF remains the authority for the final feasible solution. GridSFM's raw output is better understood as a fast proposal than as an operational dispatch.</p>
+<h2>What the feasibility head tells us</h2>
+<p>GridSFM also returns a graph-level feasibility logit. All 25 almost-ID scenarios received feasibility probabilities between 0.965 and 0.99998. The six PGLib outputs were:</p>
+<p><img src="#harmful-link" alt="Feasibility output" /></p>
+<p>* Exploratory result; excluded from accepted OOD aggregates.</p>
+<p>Three accepted OOD cases therefore look infeasible to the classifier even though AC-OPF solves them. This does not prove a monotonic relationship between size and feasibility score: the smallest accepted OOD case retains high confidence, and case ordering does not track bus count cleanly.</p>
+<p>A plausible hypothesis is that scale or correlated distribution shift confounds the feasibility head. Testing that requires controlled same-family, matched-scale data and calibration analysis. The feasibility score is also not a certificate for GridSFM's predicted dispatch; KCL and thermal checks remain separate.</p>
+<h2>Latency and solver iterations</h2>
+<p>Lower latency is better; faster result in each row is bold. “Advantage” is AC-OPF time divided by GridSFM time.</p>
+<p><img src="#harmful-link" alt="Latency and solver iterations" /></p>
+<p>* Exploratory result; excluded from accepted OOD aggregates.</p>
+<p>GridSFM's measured model-resident request is shorter in every row. This is not yet a formal end-to-end speedup: the GridSFM timer excludes Python startup, imports, and checkpoint loading, while the AC timer covers PowerModels/JuMP construction and optimization but excludes container startup and parsing. Repeated, boundary-matched measurements are needed for a production latency claim.</p>
+<h2>Toward a hybrid solver</h2>
+<p>These results point toward a hybrid: use GridSFM's fast prediction to initialize AC-OPF, then let the solver enforce physical feasibility and produce the final answer. The <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2026/05/GridFM_white_paper.pdf">GridSFM white paper</a> introduced this direction; we are now testing it under our own networks, perturbations, and OOD conditions.</p>
+<p>We are not sharing those results yet. The next post will answer the practical question left open here: can a GridSFM warm start preserve AC-OPF quality while materially reducing total latency?</p>
+<h2>Takeaways</h2>
+<ul>
+<li>GridSFM performs materially better on familiar, training-scale topologies than on the accepted large-PGLib set, though almost-ID errors are not uniformly small.</li>
+<li>Zero-shot inference executes on graphs far beyond the released model's training-size range, including a 78,484-bus exploratory probe.</li>
+<li>Larger does not always mean worse; topology and case family matter.</li>
+<li>Low regression error does not imply KCL or thermal feasibility.</li>
+<li>Feasibility probability shifts sharply under OOD evaluation, but is neither calibrated as an OOD detector nor a certificate for predicted dispatch.</li>
+<li>Most promising direction is hybrid: learned proposal, optimization-backed final answer. Results follow in the next post.</li>
+</ul>
+<h2>Pinch of Salt</h2>
+<p>These results should be read with several limits in mind:</p>
+<ul>
+<li>Almost-ID tests use training-exposed topology families. They validate behavior under new perturbations, not unseen-grid generalization.</li>
+<li>PGLib and OPFData appeared in pretraining. Our OOD claim covers topology and scale, not a completely unseen data family.</li>
+<li>Only four PGLib cases enter accepted aggregates. The 24k and 78k results are exploratory.</li>
+<li>OOD coverage is small and uses one unperturbed operating point per topology.</li>
+<li>Grid size is clearly outside the training range, but electrical-feature distributions have not been audited against training data.</li>
+<li>Feasibility probability is not calibrated as an OOD score. Topology and case family confound any apparent relationship with size.</li>
+<li>OOD timings are single observations on one CPU machine. GridSFM and AC-OPF timers also cover different execution boundaries.</li>
+<li>AC-OPF uses a nonlinear local solver. <code>LOCALLY_SOLVED</code> is a strong feasible reference, not proof of a global optimum.</li>
+</ul>
+</body>
+</html>

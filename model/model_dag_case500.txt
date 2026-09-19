@@ -1,0 +1,74 @@
+GridSFM architecture DAG (replicated layers collapsed)
+======================================================
+parameters: 15,148,227 total; 15,148,227 trainable
+representative batch: 1 graph(s)
+
+INPUT: heterogeneous power-grid graph
+-------------------------------------
+type          count   input   Hodge PE   encoder in   trunk out
+bus              500      16         +8           24         128
+generator        171      11          -           11         128
+load             281       2          -            2         128
+shunt             31       2          -            2         128
+branch_ac        536      13         +8           21         128
+branch_tr        192      15         +8           23         128
+cycle            229       4         +8           12         128
+
+                         heterogeneous input
+                                  |
+                                  v
+  Hodge positional encoder  [per bus/branch/cycle type]
+    [N_type, F_type] -> 4 diffusion steps -> [N_type, 8]
+                                  | concatenate PE
+                                  v
+  Type encoders x7  [LayerNorm + Linear]
+    [N_type, F_type(+8 where active)] -> [N_type, 128]
+                                  |
+                                  v
++---------------- GridBlock x8 ----------------+
+| input/output: [N_type, 128]                 |
+|                                                     |
+|  1. LayerNorm -> linear self-attention (4 heads) |
+|     Q/K/V/O: 128 -> 128             |
+|     + residual: [N_type,128] -> [N_type,128]       |
+|                                                     |
+|  2. LayerNorm -> heterogeneous message passing      |
+|     14 active typed relations; signed incidence/GraphSAGE |
+|     + residual: [N_type,128] -> [N_type,128]       |
+|                                                     |
+|  3. LayerNorm -> FFN -> residual                    |
+|     128 -> 512 -> 128; [N_type,128] -> [N_type,128] |
++-----------------------------------------------------+
+                                  |
+                                  v
+  Typed fusion + graph pooling
+    type embeddings -> bus [500,128]
+                    -> generator [171,128]
+                    -> global [1,128]
+                                  |
+                    +-------------+-------------+
+                    |             |             |
+  Prediction heads
+  ----------------
+  theta: [500,264] -> Linear/GELU [500,64] -> Linear [500,1]
+  V    : [500,265] -> Linear/GELU [500,64] -> Linear [500,1]
+  Pg   : [171,264] -> Linear/GELU [171,64] -> Linear [171,1]
+  Qg   : [171,264] -> Linear/GELU [171,64] -> Linear [171,1]
+  feas : [1,160] -> Linear/GELU [1,64] -> Linear [1,1]
+
+  Analytical post-processing (no learned layers)
+  ------------------------------------------------
+  theta head + DC prior -> slack/mean anchor
+  V/Pg/Qg -> physical-limit clipping
+  V + theta -> AC pi-model branch flows
+
+OUTPUT
+------
+bus.pred        f32[500,2]@cpu  columns=(theta, V)
+generator.pred  f32[171,2]@cpu  columns=(Pg, Qg)
+ac_line.flows   f32[536,4]@cpu  columns=(Pij, Qij, Pji, Qji)
+transformer.flows f32[192,4]@cpu  columns=(Pij, Qij, Pji, Qji)
+feas_logit      f32[1]@cpu
+
+N_type is the number of components of that type. Shapes above are
+from the supplied sample; xN denotes shared architecture replicated N times.
