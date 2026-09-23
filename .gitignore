@@ -245,6 +245,15 @@ _pkginfo.txt
 # but keep track of directories ending in .cache
 !?*.[Cc]ache/
 
+# Local OPFData downloads, extracted graphs, and generated subsets
+/.cache/opfdata/
+/.cache/opfdata_shards/
+
+# Local GridSFM datasets and generated experiment artifacts
+/gridsfm_data/
+/artifacts_seed*/
+/artifacts_ood/
+
 # Others
 ClientBin/
 ~$*

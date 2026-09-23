@@ -1,8 +1,9 @@
 """Fine-tuning loop helper for GridSFM. OPFData format only.
 
 `finetune_opfdata(model, train_loader, val_loader, epochs, ...)` runs the
-standard FT recipe: AdamW on the full model + `compute_loss` with the
-default lambda config + grad clip 5.0 + per-epoch val pass.
+standard FT recipe: AdamW on trainable parameters + `compute_loss` with the
+default lambda config + grad clip 5.0 + per-epoch val pass. For a regular
+backbone all parameters are trainable; adapter wrappers can freeze the base.
 
 `train_loader` and `val_loader` must yield batches in OPFData's HeteroData
 schema (see `OPFDataAdapterDataset` and `SyntheticMixedDataset`). Custom
@@ -64,7 +65,11 @@ def finetune_opfdata(
     """
     device = next(model.parameters()).device
     train_ds = train_loader.dataset
-    opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    trainable = [parameter for parameter in model.parameters()
+                 if parameter.requires_grad]
+    if not trainable:
+        raise ValueError("model has no trainable parameters")
+    opt = torch.optim.AdamW(trainable, lr=lr, weight_decay=weight_decay)
     loss_kwargs = loss_kwargs or {}
 
     log: List[Dict[str, Any]] = []
@@ -90,7 +95,7 @@ def finetune_opfdata(
                 continue
             opt.zero_grad()
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip)
+            torch.nn.utils.clip_grad_norm_(trainable, max_norm=grad_clip)
             opt.step()
             sum_loss += float(loss.item())
             n_iters += 1

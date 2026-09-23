@@ -40,6 +40,7 @@ dependencies = [
     "numpy>=1.24,<3",
     "scipy>=1.10,<2",
     "huggingface_hub>=0.34,<1",
+    "PyYAML>=6,<7",
 ]
 
 [project.optional-dependencies]

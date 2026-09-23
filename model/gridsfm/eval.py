@@ -31,6 +31,7 @@ def eval_pass(
     loader,
     device=None,
     loss_kwargs: Optional[Dict[str, float]] = None,
+    include_loss_parts: bool = False,
 ) -> Dict[str, Any]:
     """Returns a metrics dict for the FT eval pass.
 
@@ -63,6 +64,7 @@ def eval_pass(
     loss_kwargs = loss_kwargs or {}
 
     sum_loss, n_iters = 0.0, 0
+    sum_loss_parts: Dict[str, float] = {}
     sum_pg = sum_qg = sum_v = sum_theta = 0.0
     n_gens = n_buses = 0
     sum_cost_abs_pct, n_graphs_feas = 0.0, 0
@@ -78,12 +80,15 @@ def eval_pass(
     for batch in loader:
         batch = batch.to(device)
         model(batch)  # writes pred / feas_logit onto batch
-        loss, _ = compute_loss(batch, **loss_kwargs)
+        loss, loss_parts = compute_loss(batch, **loss_kwargs)
         # Symmetric with `finetune_opfdata`: a single NaN batch would
         # poison the running average; skip and keep going.
         if torch.isfinite(loss):
             sum_loss += float(loss.item())
             n_iters += 1
+            if include_loss_parts:
+                for name, value in loss_parts.items():
+                    sum_loss_parts[name] = sum_loss_parts.get(name, 0.0) + value
 
         pred_bin = (batch.feas_logit.view(-1) > 0).long()
         true_bin = batch.feasible.view(-1).long()
@@ -176,7 +181,7 @@ def eval_pass(
     # signal perfect performance on an empty / all-skipped loader.
     nan = float("nan")
     def _avg(num, den): return num / den if den > 0 else nan
-    return {
+    result = {
         "loss":      _avg(sum_loss, n_iters),
         "cost_mape": _avg(sum_cost_abs_pct, n_graphs_feas),
         "pg_mae":    _avg(sum_pg, n_gens),
@@ -192,3 +197,9 @@ def eval_pass(
         "feas_acc":  _avg(n_feas_correct, n_feas_total),
         "n_graphs":  n_graphs_feas,
     }
+    if include_loss_parts:
+        result["loss_parts"] = {
+            name: _avg(total, n_iters)
+            for name, total in sorted(sum_loss_parts.items())
+        }
+    return result

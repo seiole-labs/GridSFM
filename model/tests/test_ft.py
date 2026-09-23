@@ -258,6 +258,18 @@ def test_eval_pass_loss_kwargs_passthrough(model, small_loader):
         assert abs(bumped[k] - base[k]) < 1e-4, f"{k} drifted: {base[k]} -> {bumped[k]}"
 
 
+def test_eval_pass_can_return_every_loss_component(model, small_loader):
+    result = eval_pass(model, small_loader, device=DEVICE, include_loss_parts=True)
+    assert set(result["loss_parts"]) == {
+        "L_total",
+        "L_theta", "L_V", "L_Pg", "L_Qg",
+        "L_feas", "L_cost", "L_stress_feas",
+        "L_kcl_p", "L_kcl_q", "L_br_p", "L_br_q",
+        "L_therm", "L_therm_lim",
+    }
+    assert result["loss_parts"]["L_total"] == pytest.approx(result["loss"])
+
+
 def test_finetune_opfdata_one_epoch(model, small_loader):
     """One full FT epoch: optimizer step actually changes weights and
     finetune_opfdata returns a log entry with the expected keys."""

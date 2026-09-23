@@ -167,6 +167,10 @@ def load_model(
             f"in the ckpt: {missing}. These would remain at Kaiming init; "
             f"refusing rather than silently shipping random weights."
         )
+    model._checkpoint_metadata = {
+        "name": meta.get("name"),
+        "hash": expected_hash,
+    }
     model.to(device).eval()
     return model
 

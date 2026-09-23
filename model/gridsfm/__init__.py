@@ -18,6 +18,7 @@ from .data import (
 from .eval import eval_pass
 from .finetune_opfdata import finetune_opfdata
 from .loss import compute_loss
+from .lora import GridSFMLoRAModel, LoRAAdapter, LoRAConfig, LoRALinear
 from .model import GridTransformerBackbone
 from .opfdata_train import OPFDataAdapterDataset
 from .schema import AC_LINE_KEY, TRANSFORMER_KEY
@@ -117,6 +118,10 @@ def predict(
 __all__ = [
     # Inference
     "GridTransformerBackbone",
+    "GridSFMLoRAModel",
+    "LoRAAdapter",
+    "LoRAConfig",
+    "LoRALinear",
     "batch_data_list",
     "load_model",
     "load_from_hf",

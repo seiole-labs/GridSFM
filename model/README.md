@@ -258,6 +258,29 @@ log = finetune_opfdata(model, train_loader, epochs=10, lr=1e-4)
 
 The whole notebook runs end-to-end on a single GPU in roughly an hour on `case6470_rte` — the n=1000 round dominates at ~3.4 min/epoch × 10 epochs ≈ 35 min, with the rest split across 0-shot eval, the small FT rounds, and the per-round held-out evals. The n=16 round finishes in a couple of minutes and is a useful smoke test that FT is wired up correctly.
 
+### CPU LoRA recipe for case6470
+
+[`examples/lora_case6470.yaml`](examples/lora_case6470.yaml) is a fully
+specified CPU recipe for training the FFN-only rank-2 LoRA adapter on 1,000
+`fulltop/train` graphs, validating on 750 `fulltop/val` graphs, and comparing
+the same frozen backbone with and without the best adapter on the 750-graph
+`fulltop/test` and `n1/test` splits.
+
+Run it from the repository root:
+
+```bash
+PYTHONPATH=model model/.venv/bin/python model/examples/train_lora_case6470.py \
+  --config model/examples/lora_case6470.yaml
+```
+
+Each run creates a timestamped directory under the configured output root. It
+receives a copy of the YAML, an append-only
+`metrics.jsonl`, `learning_rate.svg`, `train_validation_loss.svg`, and the best-validation and final-epoch
+adapter checkpoints. The JSONL records every individual loss component at each
+training step and as per-epoch train/validation averages, plus LR, gradient
+norm, full validation metrics, and final base-vs-LoRA test metrics. The run
+refuses to write into a non-empty output directory by default.
+
 ## Citation
 
 A reference will be added once the accompanying paper is public. Until then, please cite `microsoft/GridSFM`.
