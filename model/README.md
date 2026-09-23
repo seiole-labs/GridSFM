@@ -258,13 +258,17 @@ log = finetune_opfdata(model, train_loader, epochs=10, lr=1e-4)
 
 The whole notebook runs end-to-end on a single GPU in roughly an hour on `case6470_rte` — the n=1000 round dominates at ~3.4 min/epoch × 10 epochs ≈ 35 min, with the rest split across 0-shot eval, the small FT rounds, and the per-round held-out evals. The n=16 round finishes in a couple of minutes and is a useful smoke test that FT is wired up correctly.
 
-### CPU LoRA recipe for case6470
+### CPU LoRA recipe for case6470 (rank 4, alpha 4)
 
 [`examples/lora_case6470.yaml`](examples/lora_case6470.yaml) is a fully
-specified CPU recipe for training the FFN-only rank-2 LoRA adapter on 1,000
+specified CPU recipe for training the FFN-only rank-4, alpha-4 LoRA adapter on 1,000
 `fulltop/train` graphs, validating on 750 `fulltop/val` graphs, and comparing
 the same frozen backbone with and without the best adapter on the 750-graph
 `fulltop/test` and `n1/test` splits.
+
+See the dedicated [LoRA training guide](examples/LORA_TRAINING.md) for
+environment setup, checkpoint download, the large OPFData download warning, a
+10-graph smoke run, the full training command, and output descriptions.
 
 Run it from the repository root:
 

@@ -2,7 +2,7 @@
 schema_version: 1
 
 run:
-  name: case6470_gridblock_ffn_lora_r2_a2_smoke10
+  name: case6470_gridblock_ffn_lora_r4_a4_smoke10
   seed: 42
   device: cpu
   output_root: artifacts/lora_smoke_runs
@@ -15,12 +15,14 @@ model:
 adapter:
   checkpoint: null
   target: gridblock_ffn
-  rank: 2
-  alpha: 2.0
+  rank: 4
+  alpha: 4.0
   dropout: 0.0
 
 data:
-  root: .cache/opfdata_smoke
+  # Share the full recipe's cache. OPFData downloads and processes the whole
+  # group-0 shard even though this smoke recipe selects only ten graphs.
+  root: .cache/opfdata
   case_name: pglib_opf_case6470_rte
   num_groups: 1
   train:
