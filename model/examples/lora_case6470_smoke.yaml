@@ -2,9 +2,9 @@
 schema_version: 1
 
 run:
-  name: case6470_gridblock_ffn_lora_r4_a4_smoke10
+  name: case6470_gridblock_ffn_lora_r2_a2_smoke10
   seed: 42
-  device: cpu
+  device: cuda
   output_root: artifacts/lora_smoke_runs
   timestamp_format: "%Y%m%dT%H%M%S%z"
   fail_if_output_exists: true
@@ -15,16 +15,19 @@ model:
 adapter:
   checkpoint: null
   target: gridblock_ffn
-  rank: 4
-  alpha: 4.0
+  rank: 2
+  alpha: 2.0
   dropout: 0.0
 
 data:
-  # Share the full recipe's cache. OPFData downloads and processes the whole
-  # group-0 shard even though this smoke recipe selects only ten graphs.
-  root: .cache/opfdata
+  # Share the expensive OPFData shard with the full recipe.
+  root: .cache/opfdata_lora1000
   case_name: pglib_opf_case6470_rte
   num_groups: 1
+  cache_graphs:
+    train: 1000
+    val: 750
+    test: 750
   train:
     variant: fulltop
     split: train
@@ -85,8 +88,8 @@ training:
 
 logging:
   metrics_jsonl: metrics.jsonl
-  learning_rate_svg: learning_rate.svg
-  train_validation_loss_svg: train_validation_loss.svg
+  learning_rate_png: learning_rate.png
+  train_validation_loss_png: train_validation_loss.png
   config_snapshot: config.yaml
   best_adapter: best_adapter.pt
   final_adapter: final_adapter.pt

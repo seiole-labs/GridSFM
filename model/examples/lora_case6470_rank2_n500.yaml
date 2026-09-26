@@ -1,11 +1,12 @@
+# Rank-2 case6470 graph sweep: 500 training graphs, physical batch 4.
 # Paths are relative to the repository root unless absolute.
 schema_version: 1
 
 run:
-  name: case6470_gridblock_ffn_lora_r2_a2
+  name: case6470_lora_r2_a2_n500_e8_b4
   seed: 42
   device: cuda
-  output_root: artifacts/lora_runs
+  output_root: artifacts/lora_rank2_b4_runs
   timestamp_format: "%Y%m%dT%H%M%S%z"
   fail_if_output_exists: true
 
@@ -13,8 +14,6 @@ model:
   checkpoint: model/checkpoints/gridsfm_open_v1.1.pt
 
 adapter:
-  # Set checkpoint to a saved adapter path to continue from it. Leave null
-  # to initialize a new, zero-output adapter.
   checkpoint: null
   target: gridblock_ffn
   rank: 2
@@ -32,7 +31,7 @@ data:
   train:
     variant: fulltop
     split: train
-    graphs: 1000
+    graphs: 500
   validation:
     variant: fulltop
     split: val
@@ -60,9 +59,8 @@ loader:
   drop_last: false
 
 training:
-  epochs: 2
-  # Physical batch 8 exceeds 22 GiB on an L4; 4 x 2 is effective batch 8.
-  gradient_accumulation_steps: 2
+  epochs: 8
+  gradient_accumulation_steps: 1
   gradient_clip_norm: 5.0
   optimizer:
     name: adamw

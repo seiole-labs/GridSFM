@@ -7,8 +7,8 @@ import pytest
 from gridsfm.experiment_logging import (
     JSONLLogger,
     cosine_learning_rate,
-    write_learning_rate_svg,
-    write_train_validation_loss_svg,
+    write_learning_rate_png,
+    write_train_validation_loss_png,
 )
 
 
@@ -43,29 +43,21 @@ def test_jsonl_logger_serializes_non_finite_metrics_as_null(tmp_path):
     }
 
 
-def test_learning_rate_svg_contains_curve_and_axis_labels(tmp_path):
-    path = tmp_path / "learning_rate.svg"
-    write_learning_rate_svg(
+def test_learning_rate_png_is_valid_raster_image(tmp_path):
+    path = tmp_path / "learning_rate.png"
+    write_learning_rate_png(
         [(1, 1e-3), (2, 5e-4), (3, 1e-5)], path, width=640, height=360,
     )
-    svg = path.read_text()
-    assert "<polyline" in svg
-    assert "optimizer step" in svg
-    assert "learning rate" in svg
+    assert path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
 
 
-def test_train_validation_loss_svg_contains_both_series(tmp_path):
-    path = tmp_path / "train_validation_loss.svg"
-    write_train_validation_loss_svg(
+def test_train_validation_loss_png_is_valid_raster_image(tmp_path):
+    path = tmp_path / "train_validation_loss.png"
+    write_train_validation_loss_png(
         [(1, 8.0), (2, 7.0)],
         [(1, 8.5), (2, 7.5)],
         path,
         width=640,
         height=360,
     )
-    svg = path.read_text()
-    assert "LoRA training and validation loss" in svg
-    assert "train" in svg
-    assert "validation" in svg
-    assert "#A970FF" in svg
-    assert "#6878FF" in svg
+    assert path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")

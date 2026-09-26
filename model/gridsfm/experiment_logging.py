@@ -6,6 +6,8 @@ import math
 from pathlib import Path
 from typing import Any, Iterable, TextIO
 
+from PIL import Image, ImageDraw, ImageFont
+
 
 def _json_safe(value: Any) -> Any:
     if isinstance(value, float) and not math.isfinite(value):
@@ -62,14 +64,52 @@ def cosine_learning_rate(
     return final_lr + (initial_lr - final_lr) * cosine
 
 
-def write_learning_rate_svg(
+_SANS_FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+_SANS_BOLD_FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+_MONO_FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
+
+
+def _font(size: int, *, bold: bool = False, mono: bool = False):
+    path = _MONO_FONT if mono else (_SANS_BOLD_FONT if bold else _SANS_FONT)
+    try:
+        return ImageFont.truetype(path, size)
+    except OSError:
+        return ImageFont.load_default()
+
+
+def _png_destination(path: str | Path) -> Path:
+    destination = Path(path)
+    if destination.suffix.lower() != ".png":
+        raise ValueError(f"PNG plot destination must end in .png: {destination}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    return destination
+
+
+def _draw_vertical_label(
+    image: Image.Image,
+    text: str,
+    *,
+    center_y: float,
+    x: int,
+    font,
+    color: str,
+) -> None:
+    box = font.getbbox(text)
+    label = Image.new("RGBA", (box[2] - box[0] + 8, box[3] - box[1] + 8))
+    ImageDraw.Draw(label).text((4 - box[0], 4 - box[1]), text, font=font, fill=color)
+    label = label.rotate(90, expand=True)
+    image.alpha_composite(label, (x, int(center_y - label.height / 2)))
+
+
+def write_learning_rate_png(
     points: Iterable[tuple[int, float]],
     path: str | Path,
     *,
     width: int,
     height: int,
+    subtitle: str | None = None,
 ) -> None:
-    """Write a standalone SVG learning-rate curve without plotting packages."""
+    """Write a standalone PNG learning-rate curve."""
     values = list(points)
     if not values:
         raise ValueError("at least one learning-rate point is required")
@@ -94,52 +134,48 @@ def write_learning_rate_svg(
         relative = (lr - y_min) / y_span if y_span > 0 else 0.5
         return margin_top + (1.0 - relative) * plot_height
 
-    polyline = " ".join(f"{px(step):.2f},{py(lr):.2f}" for step, lr in values)
-    destination = Path(path)
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(
-        "\n".join([
-            f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
-            f'viewBox="0 0 {width} {height}">',
-            '<rect width="100%" height="100%" fill="#020510"/>',
-            f'<rect x="{margin_left}" y="{margin_top}" width="{plot_width}" '
-            f'height="{plot_height}" rx="8" fill="#070D1F"/>',
-            f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" '
-            f'y2="{margin_top + plot_height}" stroke="#18234B"/>',
-            f'<line x1="{margin_left}" y1="{margin_top + plot_height}" '
-            f'x2="{margin_left + plot_width}" y2="{margin_top + plot_height}" '
-            'stroke="#18234B"/>',
-            f'<polyline points="{polyline}" fill="none" stroke="#A970FF" '
-            'stroke-width="3"/>',
-            f'<text x="{width / 2:.1f}" y="{height - 16}" text-anchor="middle" '
-            'fill="#8993BA" font-family="Inter, sans-serif" '
-            'font-size="16">optimizer step</text>',
-            f'<text x="22" y="{height / 2:.1f}" text-anchor="middle" '
-            'fill="#8993BA" font-family="Inter, sans-serif" font-size="16" '
-            f'transform="rotate(-90 22 {height / 2:.1f})">learning rate</text>',
-            f'<text x="{margin_left}" y="{margin_top - 10}" fill="#F5F2FF" '
-            'font-family="monospace" '
-            f'font-size="13">max {y_max:.6g}</text>',
-            f'<text x="{margin_left}" y="{margin_top + plot_height + 22}" '
-            f'fill="#8993BA" font-family="monospace" font-size="13">min {y_min:.6g}</text>',
-            f'<text x="{margin_left + plot_width}" y="{margin_top + plot_height + 22}" '
-            f'text-anchor="end" fill="#8993BA" font-family="monospace" '
-            f'font-size="13">step {x_max}</text>',
-            '</svg>',
-        ]),
-        encoding="utf-8",
+    image = Image.new("RGBA", (width, height), "#020510")
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle(
+        (margin_left, margin_top, margin_left + plot_width, margin_top + plot_height),
+        radius=8,
+        fill="#070D1F",
     )
+    draw.line((margin_left, margin_top, margin_left, margin_top + plot_height), fill="#18234B")
+    draw.line(
+        (margin_left, margin_top + plot_height, margin_left + plot_width, margin_top + plot_height),
+        fill="#18234B",
+    )
+    coordinates = [(px(step), py(lr)) for step, lr in values]
+    if len(coordinates) == 1:
+        x, y = coordinates[0]
+        draw.ellipse((x - 3, y - 3, x + 3, y + 3), fill="#A970FF")
+    else:
+        draw.line(coordinates, fill="#A970FF", width=3, joint="curve")
+    axis_font = _font(16)
+    mono_font = _font(13, mono=True)
+    draw.text((width / 2, height - 28), "optimizer step", font=axis_font, fill="#8993BA", anchor="mm")
+    _draw_vertical_label(
+        image, "learning rate", center_y=height / 2, x=14, font=axis_font, color="#8993BA"
+    )
+    draw.text((margin_left, margin_top - 8), f"max {y_max:.6g}", font=mono_font, fill="#F5F2FF", anchor="ls")
+    if subtitle:
+        draw.text((margin_left + 150, margin_top - 8), subtitle, font=_font(12), fill="#8993BA", anchor="ls")
+    draw.text((margin_left, margin_top + plot_height + 8), f"min {y_min:.6g}", font=mono_font, fill="#8993BA", anchor="la")
+    draw.text((margin_left + plot_width, margin_top + plot_height + 8), f"step {x_max}", font=mono_font, fill="#8993BA", anchor="ra")
+    image.convert("RGB").save(_png_destination(path), format="PNG", optimize=True)
 
 
-def write_train_validation_loss_svg(
+def write_train_validation_loss_png(
     train_points: Iterable[tuple[int, float]],
     validation_points: Iterable[tuple[int, float]],
     path: str | Path,
     *,
     width: int,
     height: int,
+    subtitle: str | None = None,
 ) -> None:
-    """Write an epoch-level train/validation loss plot as standalone SVG."""
+    """Write an epoch-level train/validation loss plot as PNG."""
     train = list(train_points)
     validation = list(validation_points)
     if not train or not validation:
@@ -167,86 +203,61 @@ def write_train_validation_loss_svg(
     def py(loss: float) -> float:
         return margin_top + (1.0 - (loss - y_min) / (y_max - y_min)) * plot_height
 
-    def polyline(points: list[tuple[int, float]]) -> str:
-        return " ".join(f"{px(epoch):.2f},{py(loss):.2f}" for epoch, loss in points)
+    image = Image.new("RGBA", (width, height), "#020510")
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle(
+        (margin_left, margin_top, margin_left + plot_width, margin_top + plot_height),
+        radius=8,
+        fill="#070D1F",
+    )
+    title_font = _font(21, bold=True)
+    axis_font = _font(16)
+    tick_font = _font(13)
+    draw.text((margin_left, 14), "LoRA training and validation loss", font=title_font, fill="#F5F2FF")
+    if subtitle:
+        draw.text((margin_left, 42), subtitle, font=_font(12), fill="#8993BA")
 
-    grid_lines = []
     tick_count = 5
     for index in range(tick_count):
         fraction = index / (tick_count - 1)
         y = margin_top + fraction * plot_height
         value = y_max - fraction * (y_max - y_min)
-        grid_lines.extend([
-            f'<line x1="{margin_left}" y1="{y:.2f}" '
-            f'x2="{margin_left + plot_width}" y2="{y:.2f}" '
-            'stroke="#1A2547" stroke-width="1"/>',
-            f'<text x="{margin_left - 12}" y="{y + 5:.2f}" text-anchor="end" '
-            'fill="#8993BA" font-family="Inter, sans-serif" '
-            f'font-size="13">{value:.3f}</text>',
-        ])
+        draw.line((margin_left, y, margin_left + plot_width, y), fill="#1A2547")
+        draw.text((margin_left - 12, y), f"{value:.3f}", font=tick_font, fill="#8993BA", anchor="rm")
 
-    x_labels = []
     for epoch, _ in train:
-        x_labels.append(
-            f'<text x="{px(epoch):.2f}" y="{margin_top + plot_height + 26}" '
-            'text-anchor="middle" fill="#8993BA" '
-            f'font-family="Inter, sans-serif" font-size="13">{epoch}</text>'
+        draw.text(
+            (px(epoch), margin_top + plot_height + 15),
+            str(epoch),
+            font=tick_font,
+            fill="#8993BA",
+            anchor="ma",
         )
 
-    train_markers = [
-        f'<circle cx="{px(epoch):.2f}" cy="{py(loss):.2f}" r="4" '
-        'fill="#A970FF"/>'
-        for epoch, loss in train
-    ]
-    validation_markers = [
-        f'<rect x="{px(epoch) - 4:.2f}" y="{py(loss) - 4:.2f}" '
-        'width="8" height="8" rx="1" fill="#6878FF"/>'
-        for epoch, loss in validation
-    ]
+    train_xy = [(px(epoch), py(loss)) for epoch, loss in train]
+    validation_xy = [(px(epoch), py(loss)) for epoch, loss in validation]
+    if len(train_xy) > 1:
+        draw.line(train_xy, fill="#A970FF", width=3, joint="curve")
+    if len(validation_xy) > 1:
+        draw.line(validation_xy, fill="#6878FF", width=3, joint="curve")
+    for x, y in train_xy:
+        draw.ellipse((x - 4, y - 4, x + 4, y + 4), fill="#A970FF")
+    for x, y in validation_xy:
+        draw.rounded_rectangle((x - 4, y - 4, x + 4, y + 4), radius=1, fill="#6878FF")
 
-    destination = Path(path)
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(
-        "\n".join([
-            f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
-            f'viewBox="0 0 {width} {height}">',
-            '<rect width="100%" height="100%" fill="#020510"/>',
-            f'<rect x="{margin_left}" y="{margin_top}" width="{plot_width}" '
-            f'height="{plot_height}" rx="8" fill="#070D1F"/>',
-            f'<text x="{margin_left}" y="30" fill="#F5F2FF" '
-            'font-family="Inter, sans-serif" font-size="21" '
-            'font-weight="700">LoRA training and validation loss</text>',
-            *grid_lines,
-            f'<polyline points="{polyline(train)}" fill="none" stroke="#A970FF" '
-            'stroke-width="3"/>',
-            f'<polyline points="{polyline(validation)}" fill="none" '
-            'stroke="#6878FF" stroke-width="3" stroke-dasharray="8 6"/>',
-            *train_markers,
-            *validation_markers,
-            *x_labels,
-            f'<text x="{width / 2:.1f}" y="{height - 18}" text-anchor="middle" '
-            'fill="#8993BA" font-family="Inter, sans-serif" '
-            'font-size="16">epoch</text>',
-            f'<text x="22" y="{height / 2:.1f}" text-anchor="middle" '
-            'fill="#8993BA" font-family="Inter, sans-serif" font-size="16" '
-            f'transform="rotate(-90 22 {height / 2:.1f})">loss</text>',
-            f'<line x1="{width - 235}" y1="29" x2="{width - 205}" y2="29" '
-            'stroke="#A970FF" stroke-width="3"/>',
-            f'<text x="{width - 195}" y="34" fill="#F5F2FF" '
-            'font-family="Inter, sans-serif" font-size="13">train</text>',
-            f'<line x1="{width - 130}" y1="29" x2="{width - 100}" y2="29" '
-            'stroke="#6878FF" stroke-width="3" stroke-dasharray="8 6"/>',
-            f'<text x="{width - 90}" y="34" fill="#F5F2FF" '
-            'font-family="Inter, sans-serif" font-size="13">validation</text>',
-            '</svg>',
-        ]),
-        encoding="utf-8",
-    )
+    draw.text((width / 2, height - 24), "epoch", font=axis_font, fill="#8993BA", anchor="mm")
+    _draw_vertical_label(image, "loss", center_y=height / 2, x=14, font=axis_font, color="#8993BA")
+    legend_font = _font(13)
+    draw.line((width - 235, 29, width - 205, 29), fill="#A970FF", width=3)
+    draw.text((width - 195, 29), "train", font=legend_font, fill="#F5F2FF", anchor="lm")
+    draw.line((width - 130, 29, width - 100, 29), fill="#6878FF", width=3)
+    draw.text((width - 90, 29), "validation", font=legend_font, fill="#F5F2FF", anchor="lm")
+    image.convert("RGB").save(_png_destination(path), format="PNG", optimize=True)
 
 
 __all__ = [
     "JSONLLogger",
     "cosine_learning_rate",
-    "write_learning_rate_svg",
-    "write_train_validation_loss_svg",
+    "write_learning_rate_png",
+    "write_train_validation_loss_png",
 ]

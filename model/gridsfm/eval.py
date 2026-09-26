@@ -38,6 +38,8 @@ def eval_pass(
     Keys:
       loss:        average `compute_loss(batch, **loss_kwargs)` over the loader
       cost_mape:   per-graph |Σcost_pred - Σcost_gt| / max(Σcost_gt, 1)
+      cost_max_ape: maximum of that per-graph relative cost error
+      cost_max_abs_error: maximum absolute per-graph cost difference
       pg_mae, qg_mae, V_mae, theta_mae:  per-element MAE on feasible nodes
       brP_mae, brQ_mae:  per-end MAE on feasible, non-degenerate branches
                          against the solver's `edge_label` (denominator
@@ -68,6 +70,8 @@ def eval_pass(
     sum_pg = sum_qg = sum_v = sum_theta = 0.0
     n_gens = n_buses = 0
     sum_cost_abs_pct, n_graphs_feas = 0.0, 0
+    max_cost_abs_pct = 0.0
+    max_cost_abs_error = 0.0
     sum_brP = sum_brQ = 0.0
     n_br = 0
     sum_kcl_P = sum_kcl_Q = 0.0
@@ -120,8 +124,11 @@ def eval_pass(
         if gmask is not None and gmask.any():
             cp_g = _per_graph_gen_cost(batch, gp[:, 0])
             cg_g = _per_graph_gen_cost(batch, gt[:, 0])
-            rel = (cp_g[gmask] - cg_g[gmask]).abs() / cg_g[gmask].clamp_min(1.0)
+            abs_error = (cp_g[gmask] - cg_g[gmask]).abs()
+            rel = abs_error / cg_g[gmask].clamp_min(1.0)
             sum_cost_abs_pct += float(rel.sum())
+            max_cost_abs_pct = max(max_cost_abs_pct, float(rel.max()))
+            max_cost_abs_error = max(max_cost_abs_error, float(abs_error.max()))
             n_graphs_feas += int(gmask.sum())
 
             # Branch flow MAE + thermal loading: shared edge gather.
@@ -184,6 +191,8 @@ def eval_pass(
     result = {
         "loss":      _avg(sum_loss, n_iters),
         "cost_mape": _avg(sum_cost_abs_pct, n_graphs_feas),
+        "cost_max_ape": max_cost_abs_pct if n_graphs_feas > 0 else nan,
+        "cost_max_abs_error": max_cost_abs_error if n_graphs_feas > 0 else nan,
         "pg_mae":    _avg(sum_pg, n_gens),
         "qg_mae":    _avg(sum_qg, n_gens),
         "V_mae":     _avg(sum_v, n_buses),

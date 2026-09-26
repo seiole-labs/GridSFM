@@ -1,58 +1,178 @@
 """OPFData adapter for GridSFM fine-tuning.
 
-Wraps PyG's `torch_geometric.datasets.OPFDataset` (the Google DeepMind
-OPFData benchmark, https://arxiv.org/abs/2406.07234) so each graph yields
-a HeteroData ready for `SyntheticMixedDataset` + `compute_loss`. The
-public surface is `OPFDataAdapterDataset`.
+Wraps PyG's ``OPFDataset`` while building its tensor cache directly from the
+compressed archive. This avoids materializing the much larger JSON payload on
+disk before training.
 """
 from __future__ import annotations
 
+import io
+import json
 import os.path as osp
+import tarfile
 from typing import Optional
 
 import torch
 from torch.utils.data import Dataset
 from torch_geometric.data import HeteroData
+from torch_geometric.data.download import download_url
 from torch_geometric.datasets import OPFDataset
+from torch_geometric.datasets.opf import extract_edge_index, extract_edge_index_rev
+from tqdm import tqdm
+
+
+def _opf_object_to_data(obj: dict) -> HeteroData:
+    """Convert one OPFData JSON object without materializing it on disk."""
+    grid = obj["grid"]
+    solution = obj["solution"]
+    metadata = obj["metadata"]
+
+    data = HeteroData()
+    data.x = torch.tensor(grid["context"]).view(-1)
+    data.objective = torch.tensor(metadata["objective"])
+
+    data["bus"].x = torch.tensor(grid["nodes"]["bus"])
+    data["bus"].y = torch.tensor(solution["nodes"]["bus"])
+    data["generator"].x = torch.tensor(grid["nodes"]["generator"])
+    data["generator"].y = torch.tensor(solution["nodes"]["generator"])
+    data["load"].x = torch.tensor(grid["nodes"]["load"])
+    data["shunt"].x = torch.tensor(grid["nodes"]["shunt"])
+
+    for edge_type in ("ac_line", "transformer"):
+        store = data["bus", edge_type, "bus"]
+        store.edge_index = extract_edge_index(obj, edge_type)
+        store.edge_attr = torch.tensor(grid["edges"][edge_type]["features"])
+        store.edge_label = torch.tensor(
+            solution["edges"][edge_type]["features"]
+        )
+
+    for node_type, edge_type in (
+        ("generator", "generator_link"),
+        ("load", "load_link"),
+        ("shunt", "shunt_link"),
+    ):
+        data[node_type, edge_type, "bus"].edge_index = extract_edge_index(
+            obj, edge_type,
+        )
+        data["bus", edge_type, node_type].edge_index = extract_edge_index_rev(
+            obj, edge_type,
+        )
+    return data
 
 
 class _CachedOPFDataset(OPFDataset):
-    """OPFDataset that skips re-download when `<root>/.../processed/*.pt` exists."""
+    """OPFDataset with a reusable, disk-bounded streaming cache builder."""
+
+    def __init__(self, *args, cache_graphs=None, **kwargs):
+        self.cache_graphs = (
+            None
+            if cache_graphs is None
+            else {name: int(value) for name, value in cache_graphs.items()}
+        )
+        super().__init__(*args, **kwargs)
+
+    @property
+    def processed_dir(self) -> str:
+        base = super().processed_dir
+        if self.cache_graphs is None:
+            return base
+        suffix = "_".join(
+            str(self.cache_graphs[name]) for name in ("train", "val", "test")
+        )
+        return f"{base}_subset_{suffix}"
+
+    def download(self) -> None:
+        """Download archives without expanding their large JSON payloads."""
+        for name in self.raw_file_names:
+            url = f"{self.url}/{self._release}/{name}"
+            download_url(url, self.raw_dir)
+
+    def process(self) -> None:
+        """Stream JSON members directly into the three PyG tensor caches."""
+        split_data = {"train": [], "val": [], "test": []}
+        train_limit = int(15_000 * self.num_groups * 0.9)
+        val_limit = train_limit + int(15_000 * self.num_groups * 0.05)
+        split_starts = {"train": 0, "val": train_limit, "test": val_limit}
+        full_counts = {
+            "train": train_limit,
+            "val": val_limit - train_limit,
+            "test": 15_000 * self.num_groups - val_limit,
+        }
+        selected_counts = self.cache_graphs or full_counts
+        if set(selected_counts) != set(full_counts):
+            raise ValueError("cache_graphs must define train, val, and test")
+        for split, count in selected_counts.items():
+            if count < 0 or count > full_counts[split]:
+                raise ValueError(
+                    f"cache_graphs.{split} must be between 0 and "
+                    f"{full_counts[split]}"
+                )
+
+        for archive_path in self.raw_paths:
+            with tarfile.open(archive_path, mode="r:gz") as archive:
+                members = (
+                    member for member in archive
+                    if member.isfile() and member.name.endswith(".json")
+                )
+                for member in tqdm(
+                    members,
+                    desc=f"Processing {osp.basename(archive_path)}",
+                    unit="graph",
+                ):
+                    name = osp.basename(member.name)
+                    index = int(osp.splitext(name)[0].split("_")[1])
+                    if index < train_limit:
+                        split = "train"
+                    elif index < val_limit:
+                        split = "val"
+                    else:
+                        split = "test"
+                    if index >= split_starts[split] + selected_counts[split]:
+                        continue
+
+                    source = archive.extractfile(member)
+                    if source is None:
+                        raise RuntimeError(
+                            f"could not read JSON member {member.name!r}"
+                        )
+                    with io.TextIOWrapper(source, encoding="utf-8") as stream:
+                        obj = json.load(stream)
+
+                    data = _opf_object_to_data(obj)
+                    if self.pre_filter is not None and not self.pre_filter(data):
+                        continue
+                    if self.pre_transform is not None:
+                        data = self.pre_transform(data)
+
+                    split_data[split].append((index, data))
+
+        for split, path in zip(("train", "val", "test"), self.processed_paths):
+            indexed = split_data[split]
+            if len(indexed) != selected_counts[split]:
+                raise RuntimeError(
+                    f"archive yielded {len(indexed)} {split} graphs; "
+                    f"expected {selected_counts[split]}"
+                )
+            indexed.sort(key=lambda item: item[0])
+            self.save([data for _, data in indexed], path)
 
     def _download(self):
-        if all(osp.exists(p) for p in self.processed_paths):
+        if all(osp.exists(path) for path in self.processed_paths):
             return
         super()._download()
 
     def _process(self):
-        if all(osp.exists(p) for p in self.processed_paths):
+        if all(osp.exists(path) for path in self.processed_paths):
             return
         super()._process()
 
 
 class OPFDataAdapterDataset(Dataset):
-    """Yield OPFData samples adapted for FT.
+    """Yield OPFData samples adapted for GridSFM fine-tuning.
 
-    Args:
-      root: storage location for the PyG OPFDataset cache.
-      case_name: pglib case name (e.g. ``"pglib_opf_case6470_rte"``).
-      variant: ``"fulltop"`` or ``"n1"``.
-      split: ``"train"`` (13.5k graphs) / ``"val"`` (750) / ``"test"`` (750).
-      n_graphs: cap on `__len__` / `__getitem__`. Note that the cap is
-        applied AFTER the underlying PyG ``OPFDataset`` finishes its
-        download + process step, so ``n_graphs=1`` does NOT make the
-        constructor lightweight: the first call still downloads and
-        decodes the full ``num_groups * 15000``-graph cache. Subsequent
-        calls hit ``_CachedOPFDataset`` and return instantly. ``None``
-        means no cap (use the full split, ~13.5k / 750 / 750).
-      num_groups: how many 15k-graph shards to download (default 1).
-      transform: callable applied AFTER schema adaptation. The model
-        forward requires cycle-basis + Hodge PE features on every graph
-        (HodgePE reads `data['cycle']`). Either pass the cycle/PE
-        transform here, OR pass `None` when wrapping in
-        `SyntheticMixedDataset` (set the transform on the wrapper
-        instead; applying it on both sides re-runs the cycle+PE attach
-        twice per sample).
+    ``n_graphs`` caps access after the underlying PyG cache is prepared. The
+    cache builder streams the compressed archive into reusable tensor files,
+    so the large intermediate JSON tree is never required.
     """
 
     def __init__(
@@ -63,12 +183,15 @@ class OPFDataAdapterDataset(Dataset):
         split: str = "train",
         n_graphs: Optional[int] = None,
         num_groups: int = 1,
+        cache_graphs: Optional[dict[str, int]] = None,
         transform=None,
     ):
         if variant not in ("fulltop", "n1"):
             raise ValueError(f"variant must be 'fulltop' or 'n1', got {variant!r}")
         if split not in ("train", "val", "test"):
-            raise ValueError(f"split must be 'train' | 'val' | 'test', got {split!r}")
+            raise ValueError(
+                f"split must be 'train' | 'val' | 'test', got {split!r}"
+            )
         self.case_name = case_name
         self.variant = variant
         self.split = split
@@ -79,29 +202,27 @@ class OPFDataAdapterDataset(Dataset):
             case_name=case_name,
             num_groups=int(num_groups),
             topological_perturbations=(variant == "n1"),
+            cache_graphs=cache_graphs,
         )
-        self._n = (len(self._inner) if n_graphs is None
-                   else min(int(n_graphs), len(self._inner)))
+        self._n = (
+            len(self._inner)
+            if n_graphs is None
+            else min(int(n_graphs), len(self._inner))
+        )
 
     def __len__(self) -> int:
         return self._n
 
     def __getitem__(self, idx: int) -> HeteroData:
-        # OPFData drops infeasibles per the paper, so every yielded graph
-        # is feasible by construction; pin the label so the FT feas head
-        # sees a uniform schema.
-        #
-        # Returned graph is NOT a deep copy of the PyG cache. Consumers
-        # that mutate (e.g. `SyntheticMixedDataset`) MUST `.clone()` first;
-        # the wrapper already does. Dropping a defensive `.clone()` here
-        # saves an extra per-sample tensor-clone on large grids.
-        g = self._inner[int(idx)]
-        g.feasible = torch.tensor(1, dtype=torch.long)
+        graph = self._inner[int(idx)]
+        graph.feasible = torch.tensor(1, dtype=torch.long)
         if self.transform is not None:
-            g = self.transform(g)
-        return g
+            graph = self.transform(graph)
+        return graph
 
     def __repr__(self) -> str:
-        return (f"OPFDataAdapterDataset(case={self.case_name}, "
-                f"variant={self.variant}, split={self.split}, "
-                f"n={self._n}/{len(self._inner)})")
+        return (
+            f"OPFDataAdapterDataset(case={self.case_name}, "
+            f"variant={self.variant}, split={self.split}, "
+            f"n={self._n}/{len(self._inner)})"
+        )
